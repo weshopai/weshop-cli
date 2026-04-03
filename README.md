@@ -5,11 +5,11 @@ One command. Studio-quality images.
 `weshop-cli` turns [WeShop AI](https://www.weshop.ai) into a command-line tool — virtual try-on, model swap, background replace, pose change, canvas expand, and more. Built for developers and AI agents who want to generate production-ready fashion & product images without touching a browser.
 
 ```bash
-# Try on a dress with a generated model
-weshop virtualtryon --image ./dress.png --gen-version weshopPro --prompt-mode auto --aspect-ratio 2:3
+# Virtual try-on: put a garment onto a model reference
+weshop virtualtryon --image ./garment.png --model-image ./model-photo.png --gen-version weshopPro --prompt-mode auto --aspect-ratio 2:3
 
-# Swap the model and scene in a fashion photo
-weshop aimodel --image ./model.png --mask-type autoApparelSegment --generation-mode freeCreation --prompt 'outdoor cafe, golden hour'
+# Replace the background in a fashion photo, keep the clothing
+weshop aimodel --image ./fashion.png --mask-type autoApparelSegment --generation-mode referToOrigin --location-id 6000372
 
 # Remove background and replace with white
 weshop removebg --image ./product.png --mask-type autoSubjectSegment --bg-hex '#ffffff'
@@ -24,15 +24,20 @@ weshop removebg --image ./product.png --mask-type autoSubjectSegment --bg-hex '#
 
 ## Quick start
 
+Get your API key at [open.weshop.ai/authorization/apikey](https://open.weshop.ai/authorization/apikey), then:
+
+```bash
+npm install -g weshop-cli
+export WESHOP_API_KEY=<your-key>
+weshop --help
+```
+
+### For developers
+
 ```bash
 git clone https://github.com/weshopai/weshop-cli.git
 cd weshop-cli
 npm install
-```
-
-Get your API key at [open.weshop.ai/authorization/apikey](https://open.weshop.ai/authorization/apikey), then:
-
-```bash
 export WESHOP_API_KEY=<your-key>
 npx tsx src/index.ts --help
 ```
@@ -58,6 +63,7 @@ Run `weshop <command> --help` to see each command's full parameters, enum values
 ```bash
 weshop virtualtryon \
   --image ./garment.png \
+  --model-image ./model-photo.png \
   --gen-version weshopPro \
   --prompt-mode auto \
   --aspect-ratio 2:3 \
