@@ -1,16 +1,36 @@
 {
   "name": "weshop-cli",
   "version": "0.1.0",
-  "description": "CLI for WeShop AI image generation agents",
+  "description": "CLI & Agent tool for WeShop AI — virtual try-on, model swap, background replace, pose change, and more",
   "type": "module",
   "bin": {
     "weshop": "./dist/index.js"
   },
+  "files": [
+    "dist",
+    "README.md",
+    "LICENSE"
+  ],
   "scripts": {
     "build": "tsc",
+    "prepublishOnly": "npm run build",
     "dev": "tsx src/index.ts",
     "start": "node dist/index.js"
   },
+  "keywords": [
+    "weshop",
+    "ai",
+    "image-generation",
+    "virtual-try-on",
+    "fashion",
+    "cli",
+    "agent"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/weshopai/weshop-cli.git"
+  },
+  "license": "Apache-2.0",
   "dependencies": {
     "commander": "^12.1.0",
     "form-data": "^4.0.0"
