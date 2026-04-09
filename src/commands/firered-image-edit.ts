@@ -1,6 +1,5 @@
 import { Command } from "commander";
-import { resolveImage, submitRun, waitForCompletion, type RunRequest } from "../client.js";
-import { printSubmitted, printPollResult, printError } from "../printer.js";
+import { executeRun } from "../run-helper.js";
 
 export const fireredImageEditCmd = new Command("firered-image-edit")
   .summary("FireRed image editor — edit or generate images with high fidelity using FireRed open-source model")
@@ -21,26 +20,20 @@ export const fireredImageEditCmd = new Command("firered-image-edit")
   .option("--task-name <name>", "Human-readable label for this run")
   .option("--no-wait", "Return immediately after submission; use 'weshop status <id>' to check later")
   .action(async (opts) => {
-    try {
-      const params: Record<string, unknown> = {
-        textDescription: opts.prompt,
-        aspectRatio: opts.aspectRatio ?? "auto",
-      };
-      if (opts.batch != null) params.batchCount = opts.batch;
-      const input: Record<string, unknown> = {};
-      if (opts.taskName) input.taskName = opts.taskName;
-      if (opts.image && opts.image.length > 0) {
-        const imageList: string[] = opts.image;
-        if (imageList.length > 3) { console.error("[error]\n  message: Maximum 3 images allowed"); process.exit(1); }
-        const urls: string[] = [];
-        for (const img of imageList) { const { url } = await resolveImage(img); urls.push(url); }
-        params.images = urls;
-        input.originalImage = urls[0];
-      }
-      const body: RunRequest = { agent: { name: "firered-image-edit", version: "v1.0" }, input, params };
-      const { executionId } = await submitRun(body);
-      printSubmitted(executionId);
-      if (opts.wait !== false) { printPollResult(await waitForCompletion(executionId)); }
-      else { console.log("[info]"); console.log(`  message: Use 'weshop status ${executionId}' to check progress`); }
-    } catch (err) { printError(err); process.exit(1); }
+    const imageList: string[] | undefined = opts.image;
+    if (imageList && imageList.length > 3) {
+      console.error("[error]\n  message: Maximum 3 images allowed");
+      process.exit(1);
+    }
+
+    const params: Record<string, unknown> = {
+      textDescription: opts.prompt,
+      aspectRatio: opts.aspectRatio ?? "auto",
+    };
+    if (opts.batch != null) params.batchCount = opts.batch;
+
+    const extraInput: Record<string, unknown> = {};
+    if (opts.taskName) extraInput.taskName = opts.taskName;
+
+    await executeRun("firered-image-edit", "v1.0", { images: imageList, wait: opts.wait }, params, extraInput);
   });

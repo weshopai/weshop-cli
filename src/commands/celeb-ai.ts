@@ -1,6 +1,5 @@
 import { Command } from "commander";
-import { resolveImage, submitRun, waitForCompletion, type RunRequest } from "../client.js";
-import { printSubmitted, printPollResult, printError } from "../printer.js";
+import { executeRun } from "../run-helper.js";
 
 const DEFAULT_PROMPT =
   "Take a selfie angle photo of this person and Harry Potter. No need to show the phone. choose appropriate background.";
@@ -23,19 +22,11 @@ export const celebAiCmd = new Command("celeb-ai")
   .option("--task-name <name>", "Human-readable label for this run")
   .option("--no-wait", "Return immediately after submission; use 'weshop status <id>' to check later")
   .action(async (opts) => {
-    try {
-      const imageList: string[] = opts.image;
-      if (imageList.length > 2) { console.error("[error]\n  message: Maximum 2 images allowed"); process.exit(1); }
-      const urls: string[] = [];
-      for (const img of imageList) { const { url } = await resolveImage(img); urls.push(url); }
-      const params: Record<string, unknown> = { textDescription: opts.prompt ?? DEFAULT_PROMPT, images: urls };
-      if (opts.batch != null) params.batchCount = opts.batch;
-      const input: Record<string, unknown> = { originalImage: urls[0] };
-      if (opts.taskName) input.taskName = opts.taskName;
-      const body: RunRequest = { agent: { name: "celeb-ai", version: "v1.0" }, input, params };
-      const { executionId } = await submitRun(body);
-      printSubmitted(executionId);
-      if (opts.wait !== false) { printPollResult(await waitForCompletion(executionId)); }
-      else { console.log("[info]"); console.log(`  message: Use 'weshop status ${executionId}' to check progress`); }
-    } catch (err) { printError(err); process.exit(1); }
+    const imageList: string[] = opts.image;
+    if (imageList.length > 2) { console.error("[error]\n  message: Maximum 2 images allowed"); process.exit(1); }
+    const params: Record<string, unknown> = { textDescription: opts.prompt ?? DEFAULT_PROMPT };
+    if (opts.batch != null) params.batchCount = opts.batch;
+    const extraInput: Record<string, unknown> = {};
+    if (opts.taskName) extraInput.taskName = opts.taskName;
+    await executeRun("celeb-ai", "v1.0", { images: imageList, wait: opts.wait }, params, extraInput);
   });

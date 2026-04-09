@@ -1,6 +1,5 @@
 import { Command } from "commander";
-import { resolveImage, submitRun, waitForCompletion, type RunRequest } from "../client.js";
-import { printSubmitted, printPollResult, printError } from "../printer.js";
+import { executeRun } from "../run-helper.js";
 
 const DEFAULT_PROMPT = "The person in Figure 1 is wearing the clothes shown in Figure 2";
 
@@ -24,22 +23,14 @@ export const aiClothesChangerCmd = new Command("ai-clothes-changer")
   .option("--task-name <name>", "Human-readable label for this run")
   .option("--no-wait", "Return immediately after submission; use 'weshop status <id>' to check later")
   .action(async (opts) => {
-    try {
-      const imageList: string[] = opts.image;
-      if (imageList.length !== 2) {
-        console.error("[error]\n  message: Exactly 2 images required: person (image 1) and garment (image 2)");
-        process.exit(1);
-      }
-      const urls: string[] = [];
-      for (const img of imageList) { const { url } = await resolveImage(img); urls.push(url); }
-      const params: Record<string, unknown> = { textDescription: opts.prompt ?? DEFAULT_PROMPT, images: urls };
-      if (opts.batch != null) params.batchCount = opts.batch;
-      const input: Record<string, unknown> = { originalImage: urls[0] };
-      if (opts.taskName) input.taskName = opts.taskName;
-      const body: RunRequest = { agent: { name: "ai-clothes-changer", version: "v1.0" }, input, params };
-      const { executionId } = await submitRun(body);
-      printSubmitted(executionId);
-      if (opts.wait !== false) { printPollResult(await waitForCompletion(executionId)); }
-      else { console.log("[info]"); console.log(`  message: Use 'weshop status ${executionId}' to check progress`); }
-    } catch (err) { printError(err); process.exit(1); }
+    const imageList: string[] = opts.image;
+    if (imageList.length !== 2) {
+      console.error("[error]\n  message: Exactly 2 images required: person (image 1) and garment (image 2)");
+      process.exit(1);
+    }
+    const params: Record<string, unknown> = { textDescription: opts.prompt ?? DEFAULT_PROMPT };
+    if (opts.batch != null) params.batchCount = opts.batch;
+    const extraInput: Record<string, unknown> = {};
+    if (opts.taskName) extraInput.taskName = opts.taskName;
+    await executeRun("ai-clothes-changer", "v1.0", { images: imageList, wait: opts.wait }, params, extraInput);
   });

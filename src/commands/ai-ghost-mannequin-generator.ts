@@ -1,6 +1,5 @@
 import { Command } from "commander";
-import { resolveImage, submitRun, waitForCompletion, type RunRequest } from "../client.js";
-import { printSubmitted, printPollResult, printError } from "../printer.js";
+import { executeRun } from "../run-helper.js";
 
 const DEFAULT_PROMPT =
   'Transform the clothing from the image into a professional "ghost mannequin" photography effect. Remove the original model or body completely. The garment should appear hollow and three-dimensional, retaining the shape as if worn by an invisible form. Clearly show the inside of the neck opening, cuffs, and hem, revealing the inner fabric texture and labels. The clothing is floating against a clean, pure white studio background. Soft studio lighting emphasizes fabric folds and texture.';
@@ -29,21 +28,13 @@ export const aiGhostMannequinGeneratorCmd = new Command("ai-ghost-mannequin-gene
   .option("--task-name <name>", "Human-readable label for this run")
   .option("--no-wait", "Return immediately after submission; use 'weshop status <id>' to check later")
   .action(async (opts) => {
-    try {
-      const { url: imageUrl } = await resolveImage(opts.image);
-      const params: Record<string, unknown> = {
-        textDescription: opts.prompt ?? DEFAULT_PROMPT,
-        images: [imageUrl],
-        aspectRatio: opts.aspectRatio ?? "1:1",
-        imageSize: opts.imageSize ?? "1K",
-      };
-      if (opts.batch != null) params.batchCount = opts.batch;
-      const input: Record<string, unknown> = { originalImage: imageUrl };
-      if (opts.taskName) input.taskName = opts.taskName;
-      const body: RunRequest = { agent: { name: "ai-ghost-mannequin-generator", version: "v1.0" }, input, params };
-      const { executionId } = await submitRun(body);
-      printSubmitted(executionId);
-      if (opts.wait !== false) { printPollResult(await waitForCompletion(executionId)); }
-      else { console.log("[info]"); console.log(`  message: Use 'weshop status ${executionId}' to check progress`); }
-    } catch (err) { printError(err); process.exit(1); }
+    const params: Record<string, unknown> = {
+      textDescription: opts.prompt ?? DEFAULT_PROMPT,
+      aspectRatio: opts.aspectRatio ?? "1:1",
+      imageSize: opts.imageSize ?? "1K",
+    };
+    if (opts.batch != null) params.batchCount = opts.batch;
+    const extraInput: Record<string, unknown> = {};
+    if (opts.taskName) extraInput.taskName = opts.taskName;
+    await executeRun("ai-ghost-mannequin-generator", "v1.0", { image: opts.image, wait: opts.wait }, params, extraInput);
   });

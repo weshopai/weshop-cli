@@ -1,6 +1,5 @@
 import { Command } from "commander";
-import { resolveImage, submitRun, waitForCompletion, type RunRequest } from "../client.js";
-import { printSubmitted, printPollResult, printError } from "../printer.js";
+import { executeRun } from "../run-helper.js";
 
 export const klingCmd = new Command("kling")
   .summary("AI video generation — create cinematic videos from images and text using Kling")
@@ -33,43 +32,16 @@ export const klingCmd = new Command("kling")
   .option("--task-name <name>", "Human-readable label for this run")
   .option("--no-wait", "Return immediately after submission; use 'weshop status <id>' to check later")
   .action(async (opts) => {
-    try {
-      const { url: imageUrl } = await resolveImage(opts.image);
-      console.log("[image]");
-      console.log(`  imageUrl: ${imageUrl}`);
+    const params: Record<string, unknown> = {
+      textDescription: opts.prompt,
+    };
+    if (opts.model) params.modelName = opts.model;
+    if (opts.duration) params.duration = opts.duration;
+    if (opts.generateAudio !== undefined) params.generateAudio = opts.generateAudio;
+    if (opts.batch != null) params.batchCount = opts.batch;
 
-      const params: Record<string, unknown> = {
-        textDescription: opts.prompt,
-        images: [imageUrl],
-      };
-      if (opts.model) params.modelName = opts.model;
-      if (opts.duration) params.duration = opts.duration;
-      if (opts.generateAudio !== undefined) params.generateAudio = opts.generateAudio;
-      if (opts.batch != null) params.batchCount = opts.batch;
+    const extraInput: Record<string, unknown> = {};
+    if (opts.taskName) extraInput.taskName = opts.taskName;
 
-      const input: Record<string, unknown> = {
-        originalImage: imageUrl,
-      };
-      if (opts.taskName) input.taskName = opts.taskName;
-
-      const body: RunRequest = {
-        agent: { name: "kling", version: "v1.0" },
-        input,
-        params,
-      };
-
-      const { executionId } = await submitRun(body);
-      printSubmitted(executionId);
-
-      if (opts.wait !== false) {
-        const data = await waitForCompletion(executionId);
-        printPollResult(data);
-      } else {
-        console.log("[info]");
-        console.log(`  message: Use 'weshop status ${executionId}' to check progress`);
-      }
-    } catch (err) {
-      printError(err);
-      process.exit(1);
-    }
+    await executeRun("kling", "v1.0", { image: opts.image, wait: opts.wait }, params, extraInput);
   });

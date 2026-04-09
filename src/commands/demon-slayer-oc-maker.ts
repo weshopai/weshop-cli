@@ -1,6 +1,5 @@
 import { Command } from "commander";
-import { resolveImage, submitRun, waitForCompletion, type RunRequest } from "../client.js";
-import { printSubmitted, printPollResult, printError } from "../printer.js";
+import { executeRun } from "../run-helper.js";
 
 const DEFAULT_PROMPT =
   "Turn this person into Demon Slayer anime style, Kimetsu no Yaiba aesthetics, thick brush strokes, bold black outlines, expressive eyes with distinct pupils, wearing a custom slayer uniform and a patterned haori, Ufotable high-quality animation style, cinematic lighting, sharp focus, vibrant cel-shading, keep key facial and gender characteristics.";
@@ -24,20 +23,9 @@ export const demonSlayerOcMakerCmd = new Command("demon-slayer-oc-maker")
   .option("--task-name <name>", "Human-readable label for this run")
   .option("--no-wait", "Return immediately after submission; use 'weshop status <id>' to check later")
   .action(async (opts) => {
-    try {
-      const params: Record<string, unknown> = { textDescription: opts.prompt ?? DEFAULT_PROMPT };
-      if (opts.batch != null) params.batchCount = opts.batch;
-      const input: Record<string, unknown> = {};
-      if (opts.taskName) input.taskName = opts.taskName;
-      if (opts.image) {
-        const { url: imageUrl } = await resolveImage(opts.image);
-        params.images = [imageUrl];
-        input.originalImage = imageUrl;
-      }
-      const body: RunRequest = { agent: { name: "demon-slayer-oc-maker", version: "v1.0" }, input, params };
-      const { executionId } = await submitRun(body);
-      printSubmitted(executionId);
-      if (opts.wait !== false) { printPollResult(await waitForCompletion(executionId)); }
-      else { console.log("[info]"); console.log(`  message: Use 'weshop status ${executionId}' to check progress`); }
-    } catch (err) { printError(err); process.exit(1); }
+    const params: Record<string, unknown> = { textDescription: opts.prompt ?? DEFAULT_PROMPT };
+    if (opts.batch != null) params.batchCount = opts.batch;
+    const extraInput: Record<string, unknown> = {};
+    if (opts.taskName) extraInput.taskName = opts.taskName;
+    await executeRun("demon-slayer-oc-maker", "v1.0", { image: opts.image, wait: opts.wait }, params, extraInput);
   });

@@ -126,7 +126,7 @@ import { imageMixerCmd } from "./commands/image-mixer.js";
 
 const program = new Command()
   .name("weshop")
-  .version("0.2.0")
+  .version("0.2.1")
   .addHelpCommand(false)
   .description(
     "WeShop AI — generate, edit, and transform images and videos from the command line.\n\n" +

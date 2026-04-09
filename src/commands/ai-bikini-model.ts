@@ -1,6 +1,5 @@
 import { Command } from "commander";
-import { resolveImage, submitRun, waitForCompletion, type RunRequest } from "../client.js";
-import { printSubmitted, printPollResult, printError } from "../printer.js";
+import { executeRun } from "../run-helper.js";
 
 const DEFAULT_PROMPT =
   "naturally undress and change the outfit into a thin bikini while keeping body proportions natural. Keep Model dancing tiktok dance.";
@@ -22,29 +21,18 @@ export const aiBikiniModelCmd = new Command("ai-bikini-model")
     "  weshop ai-bikini-model --image ./person.png --generated-type video --no-wait"
   )
   .requiredOption("--image <path|url>", "Input portrait or full-body photo — local file path or URL")
-  .requiredOption("--prompt <text>", "Describe the desired bikini model scene")
+  .option("--prompt <text>", "Describe the desired bikini model scene")
   .option("--generated-type <type>", "Output type: video (default) or image")
   .option("--batch <count>", "Number of outputs to generate, 1-16 (default: 1)", (v) => parseInt(v, 10), 1)
   .option("--task-name <name>", "Human-readable label for this run")
   .option("--no-wait", "Return immediately after submission; use 'weshop status <id>' to check later")
   .action(async (opts) => {
-    try {
-      const { url: imageUrl } = await resolveImage(opts.image);
-
-      const params: Record<string, unknown> = {
-        textDescription: opts.prompt,
-        images: [imageUrl],
-        generatedType: opts.generatedType ?? "video",
-      };
-      if (opts.batch != null) params.batchCount = opts.batch;
-
-      const input: Record<string, unknown> = { originalImage: imageUrl };
-      if (opts.taskName) input.taskName = opts.taskName;
-
-      const body: RunRequest = { agent: { name: "ai-bikini-model", version: "v1.0" }, input, params };
-      const { executionId } = await submitRun(body);
-      printSubmitted(executionId);
-      if (opts.wait !== false) { printPollResult(await waitForCompletion(executionId)); }
-      else { console.log("[info]"); console.log(`  message: Use 'weshop status ${executionId}' to check progress`); }
-    } catch (err) { printError(err); process.exit(1); }
+    const params: Record<string, unknown> = {
+      textDescription: opts.prompt ?? DEFAULT_PROMPT,
+      generatedType: opts.generatedType ?? "video",
+    };
+    if (opts.batch != null) params.batchCount = opts.batch;
+    const extraInput: Record<string, unknown> = {};
+    if (opts.taskName) extraInput.taskName = opts.taskName;
+    await executeRun("ai-bikini-model", "v1.0", { image: opts.image, wait: opts.wait }, params, extraInput);
   });

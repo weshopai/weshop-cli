@@ -1,6 +1,5 @@
 import { Command } from "commander";
-import { resolveImage, submitRun, waitForCompletion, type RunRequest } from "../client.js";
-import { printSubmitted, printPollResult, printError } from "../printer.js";
+import { executeRun } from "../run-helper.js";
 
 const DEFAULT_PROMPT =
   "Create a Christmas-themed portrait photo based on the provided image. The overall scene should convey a festive Christmas party atmosphere, incorporating classic Christmas decorative elements such as gift boxes, bells, apples, and snowmen. Must include a decorated Christmas tree with hanging ornaments, a small teddy bear plush placed nearby, and a large Santa Claus plush toy positioned in the background. In the foreground, golden confetti and falling snow should be visible, featuring motion blur effects to enhance the sense of movement and festivity. The photography style should use direct on-camera flash, creating a bold, frontal lighting effect. The overall aesthetic should evoke a vintage film look with subtle Y2K influences, featuring visible film grain and noise texture. Emphasize catchlights in the eyes as much as possible. The primary color palette should consist of vivid red, green, and white, with optional dark blue accents. The background vary between a white wall, a photo studio, a deep night sky filled with stars, or others as long as it aligns with a Christmas theme. The shot type can be randomly chosen between medium shot, full-body shot, or close-up. For wardrobe styling, select Christmas-themed outfits, such as Christmas sweaters, Santa hats, red scarves, or winter attire. The original facial details and body proportions of the subject must be strictly preserved.";
@@ -24,23 +23,9 @@ export const aiChristmasPhotoCmd = new Command("ai-christmas-photo")
   .option("--task-name <name>", "Human-readable label for this run")
   .option("--no-wait", "Return immediately after submission; use 'weshop status <id>' to check later")
   .action(async (opts) => {
-    try {
-      const { url: imageUrl } = await resolveImage(opts.image);
-      const params: Record<string, unknown> = {
-        textDescription: opts.prompt ?? DEFAULT_PROMPT,
-        images: [imageUrl],
-      };
-      if (opts.batch != null) params.batchCount = opts.batch;
-      const input: Record<string, unknown> = { originalImage: imageUrl };
-      if (opts.taskName) input.taskName = opts.taskName;
-      const body: RunRequest = { agent: { name: "ai-christmas-photo", version: "v1.0" }, input, params };
-      const { executionId } = await submitRun(body);
-      printSubmitted(executionId);
-      if (opts.wait !== false) {
-        printPollResult(await waitForCompletion(executionId));
-      } else {
-        console.log("[info]");
-        console.log(`  message: Use 'weshop status ${executionId}' to check progress`);
-      }
-    } catch (err) { printError(err); process.exit(1); }
+    const params: Record<string, unknown> = { textDescription: opts.prompt ?? DEFAULT_PROMPT };
+    if (opts.batch != null) params.batchCount = opts.batch;
+    const extraInput: Record<string, unknown> = {};
+    if (opts.taskName) extraInput.taskName = opts.taskName;
+    await executeRun("ai-christmas-photo", "v1.0", { image: opts.image, wait: opts.wait }, params, extraInput);
   });

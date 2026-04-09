@@ -1,6 +1,5 @@
 import { Command } from "commander";
-import { submitRun, waitForCompletion, type RunRequest } from "../client.js";
-import { printSubmitted, printPollResult, printError } from "../printer.js";
+import { executeRun } from "../run-helper.js";
 
 export const free4kVideoUpscalerCmd = new Command("free-4k-video-upscaler")
   .summary("Free 4K video upscaler — upscale video to 4K resolution using AI")
@@ -19,15 +18,9 @@ export const free4kVideoUpscalerCmd = new Command("free-4k-video-upscaler")
   .option("--task-name <name>", "Human-readable label for this run")
   .option("--no-wait", "Return immediately after submission; use 'weshop status <id>' to check later")
   .action(async (opts) => {
-    try {
-      const params: Record<string, unknown> = { videos: [opts.video] };
-      if (opts.videoSize) params.videoSize = opts.videoSize;
-      const input: Record<string, unknown> = { videos: [opts.video] };
-      if (opts.taskName) input.taskName = opts.taskName;
-      const body: RunRequest = { agent: { name: "free-4k-video-upscaler", version: "v1.0" }, input, params };
-      const { executionId } = await submitRun(body);
-      printSubmitted(executionId);
-      if (opts.wait !== false) { printPollResult(await waitForCompletion(executionId)); }
-      else { console.log("[info]"); console.log(`  message: Use 'weshop status ${executionId}' to check progress`); }
-    } catch (err) { printError(err); process.exit(1); }
+    const params: Record<string, unknown> = {};
+    if (opts.videoSize) params.videoSize = opts.videoSize;
+    const extraInput: Record<string, unknown> = {};
+    if (opts.taskName) extraInput.taskName = opts.taskName;
+    await executeRun("free-4k-video-upscaler", "v1.0", { videos: [opts.video], wait: opts.wait }, params, extraInput);
   });

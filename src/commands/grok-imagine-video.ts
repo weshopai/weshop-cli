@@ -1,6 +1,5 @@
 import { Command } from "commander";
-import { resolveImage, submitRun, waitForCompletion, type RunRequest } from "../client.js";
-import { printSubmitted, printPollResult, printError } from "../printer.js";
+import { executeRun } from "../run-helper.js";
 
 export const grokImagineVideoCmd = new Command("grok-imagine-video")
   .summary("Grok Imagine video generator — create cinematic AI videos with native audio using xAI")
@@ -24,21 +23,15 @@ export const grokImagineVideoCmd = new Command("grok-imagine-video")
   .option("--task-name <name>", "Human-readable label for this run")
   .option("--no-wait", "Return immediately after submission; use 'weshop status <id>' to check later")
   .action(async (opts) => {
-    try {
-      const { url: imageUrl } = await resolveImage(opts.image);
-      const params: Record<string, unknown> = {
-        textDescription: opts.prompt,
-        images: [imageUrl],
-        duration: opts.duration ?? "6s",
-        aspectRatio: opts.aspectRatio ?? "16:9",
-      };
-      if (opts.batch != null) params.batchCount = opts.batch;
-      const input: Record<string, unknown> = { originalImage: imageUrl };
-      if (opts.taskName) input.taskName = opts.taskName;
-      const body: RunRequest = { agent: { name: "grok-imagine-video", version: "v1.0" }, input, params };
-      const { executionId } = await submitRun(body);
-      printSubmitted(executionId);
-      if (opts.wait !== false) { printPollResult(await waitForCompletion(executionId)); }
-      else { console.log("[info]"); console.log(`  message: Use 'weshop status ${executionId}' to check progress`); }
-    } catch (err) { printError(err); process.exit(1); }
+    const params: Record<string, unknown> = {
+      textDescription: opts.prompt,
+      duration: opts.duration ?? "6s",
+      aspectRatio: opts.aspectRatio ?? "16:9",
+    };
+    if (opts.batch != null) params.batchCount = opts.batch;
+
+    const extraInput: Record<string, unknown> = {};
+    if (opts.taskName) extraInput.taskName = opts.taskName;
+
+    await executeRun("grok-imagine-video", "v1.0", { image: opts.image, wait: opts.wait }, params, extraInput);
   });

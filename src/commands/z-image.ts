@@ -1,6 +1,5 @@
 import { Command } from "commander";
-import { submitRun, waitForCompletion, type RunRequest } from "../client.js";
-import { printSubmitted, printPollResult, printError } from "../printer.js";
+import { executeRun } from "../run-helper.js";
 
 export const zImageCmd = new Command("z-image")
   .summary("AI image generation — create high-quality images from text with Z-Image by Alibaba")
@@ -20,34 +19,14 @@ export const zImageCmd = new Command("z-image")
   .option("--task-name <name>", "Human-readable label for this run")
   .option("--no-wait", "Return immediately after submission; use 'weshop status <id>' to check later")
   .action(async (opts) => {
-    try {
-      const params: Record<string, unknown> = {
-        textDescription: opts.prompt,
-        aspectRatio: opts.aspectRatio ?? "1:1",
-      };
-      if (opts.batch != null) params.batchCount = opts.batch;
+    const params: Record<string, unknown> = {
+      textDescription: opts.prompt,
+      aspectRatio: opts.aspectRatio ?? "1:1",
+    };
+    if (opts.batch != null) params.batchCount = opts.batch;
 
-      const input: Record<string, unknown> = {};
-      if (opts.taskName) input.taskName = opts.taskName;
+    const extraInput: Record<string, unknown> = {};
+    if (opts.taskName) extraInput.taskName = opts.taskName;
 
-      const body: RunRequest = {
-        agent: { name: "z-image", version: "v1.0" },
-        input,
-        params,
-      };
-
-      const { executionId } = await submitRun(body);
-      printSubmitted(executionId);
-
-      if (opts.wait !== false) {
-        const data = await waitForCompletion(executionId);
-        printPollResult(data);
-      } else {
-        console.log("[info]");
-        console.log(`  message: Use 'weshop status ${executionId}' to check progress`);
-      }
-    } catch (err) {
-      printError(err);
-      process.exit(1);
-    }
+    await executeRun("z-image", "v1.0", { wait: opts.wait }, params, extraInput);
   });

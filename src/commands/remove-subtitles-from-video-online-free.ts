@@ -1,6 +1,5 @@
 import { Command } from "commander";
-import { submitRun, waitForCompletion, type RunRequest } from "../client.js";
-import { printSubmitted, printPollResult, printError } from "../printer.js";
+import { executeRun } from "../run-helper.js";
 
 export const removeSubtitlesFromVideoOnlineFreeCmd = new Command("remove-subtitles-from-video-online-free")
   .summary("Remove subtitles from video online free — remove subtitles or text overlays from a video")
@@ -16,14 +15,8 @@ export const removeSubtitlesFromVideoOnlineFreeCmd = new Command("remove-subtitl
   .option("--task-name <name>", "Human-readable label for this run")
   .option("--no-wait", "Return immediately after submission; use 'weshop status <id>' to check later")
   .action(async (opts) => {
-    try {
-      const params: Record<string, unknown> = { videos: [opts.video], watermarkSelectType: "autoDetect" };
-      const input: Record<string, unknown> = { videos: [opts.video] };
-      if (opts.taskName) input.taskName = opts.taskName;
-      const body: RunRequest = { agent: { name: "remove-subtitles-from-video-online-free", version: "v1.0" }, input, params };
-      const { executionId } = await submitRun(body);
-      printSubmitted(executionId);
-      if (opts.wait !== false) { printPollResult(await waitForCompletion(executionId)); }
-      else { console.log("[info]"); console.log(`  message: Use 'weshop status ${executionId}' to check progress`); }
-    } catch (err) { printError(err); process.exit(1); }
+    const params: Record<string, unknown> = { watermarkSelectType: "autoDetect" };
+    const extraInput: Record<string, unknown> = {};
+    if (opts.taskName) extraInput.taskName = opts.taskName;
+    await executeRun("remove-subtitles-from-video-online-free", "v1.0", { videos: [opts.video], wait: opts.wait }, params, extraInput);
   });

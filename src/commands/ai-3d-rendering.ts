@@ -1,6 +1,5 @@
 import { Command } from "commander";
-import { resolveImage, submitRun, waitForCompletion, type RunRequest } from "../client.js";
-import { printSubmitted, printPollResult, printError } from "../printer.js";
+import { executeRun } from "../run-helper.js";
 
 const DEFAULT_PROMPT =
   "A screenshot of a 3D modeling software interface, showing the Blender viewport. At the center of the scene is a highly realistic 3D model of the main subject of this image in full and realistic rendering, with no visible topology or wireframe. The model is placed on a gray 3D grid ground with an infinite horizon. The software UI toolbars are visible along the side, a coordinate axis widget appears in the corner, the viewport is in solid shading mode, and the overall scene represents a 3D asset design workspace. 4k resolution and ratio.";
@@ -24,16 +23,9 @@ export const ai3dRenderingCmd = new Command("ai-3d-rendering")
   .option("--task-name <name>", "Human-readable label for this run")
   .option("--no-wait", "Return immediately after submission; use 'weshop status <id>' to check later")
   .action(async (opts) => {
-    try {
-      const { url: imageUrl } = await resolveImage(opts.image);
-      const params: Record<string, unknown> = { textDescription: opts.prompt ?? DEFAULT_PROMPT, images: [imageUrl] };
-      if (opts.batch != null) params.batchCount = opts.batch;
-      const input: Record<string, unknown> = { originalImage: imageUrl };
-      if (opts.taskName) input.taskName = opts.taskName;
-      const body: RunRequest = { agent: { name: "ai-3d-rendering", version: "v1.0" }, input, params };
-      const { executionId } = await submitRun(body);
-      printSubmitted(executionId);
-      if (opts.wait !== false) { printPollResult(await waitForCompletion(executionId)); }
-      else { console.log("[info]"); console.log(`  message: Use 'weshop status ${executionId}' to check progress`); }
-    } catch (err) { printError(err); process.exit(1); }
+    const params: Record<string, unknown> = { textDescription: opts.prompt ?? DEFAULT_PROMPT };
+    if (opts.batch != null) params.batchCount = opts.batch;
+    const extraInput: Record<string, unknown> = {};
+    if (opts.taskName) extraInput.taskName = opts.taskName;
+    await executeRun("ai-3d-rendering", "v1.0", { image: opts.image, wait: opts.wait }, params, extraInput);
   });

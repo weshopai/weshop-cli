@@ -1,6 +1,5 @@
 import { Command } from "commander";
-import { resolveImage, submitRun, waitForCompletion, type RunRequest } from "../client.js";
-import { printSubmitted, printPollResult, printError } from "../printer.js";
+import { executeRun } from "../run-helper.js";
 
 const DEFAULT_PROMPT =
   "Make a poster based on the uploaded picture and user instructions. Based on the uploaded image, determine the main color of the brand. If not available, you can use the main color of the product. The poster design should conform to the aesthetic standards of modern design styles, try to be simple and elegant. Font should have difference in sizes and a fitting style for good aesthetics.";
@@ -29,50 +28,22 @@ export const aiPosterFromImagesCmd = new Command("ai-poster-from-images")
   .option("--task-name <name>", "Human-readable label for this run")
   .option("--no-wait", "Return immediately after submission; use 'weshop status <id>' to check later")
   .action(async (opts) => {
-    try {
-      const params: Record<string, unknown> = {
-        textDescription: opts.prompt ?? DEFAULT_PROMPT,
-        aspectRatio: opts.aspectRatio ?? "1:1",
-        imageSize: opts.imageSize ?? "1K",
-      };
-      if (opts.batch != null) params.batchCount = opts.batch;
-
-      const input: Record<string, unknown> = {};
-      if (opts.taskName) input.taskName = opts.taskName;
-
-      if (opts.image && opts.image.length > 0) {
-        const imageList: string[] = opts.image;
-        if (imageList.length > 5) {
-          console.error("[error]\n  message: Maximum 5 images allowed");
-          process.exit(1);
-        }
-        const urls: string[] = [];
-        for (const img of imageList) {
-          const { url } = await resolveImage(img);
-          urls.push(url);
-        }
-        params.images = urls;
-        input.originalImage = urls[0];
+    const params: Record<string, unknown> = {
+      textDescription: opts.prompt ?? DEFAULT_PROMPT,
+      aspectRatio: opts.aspectRatio ?? "1:1",
+      imageSize: opts.imageSize ?? "1K",
+    };
+    if (opts.batch != null) params.batchCount = opts.batch;
+    const extraInput: Record<string, unknown> = {};
+    if (opts.taskName) extraInput.taskName = opts.taskName;
+    if (opts.image && opts.image.length > 0) {
+      const imageList: string[] = opts.image;
+      if (imageList.length > 5) {
+        console.error("[error]\n  message: Maximum 5 images allowed");
+        process.exit(1);
       }
-
-      const body: RunRequest = {
-        agent: { name: "ai-poster-from-images", version: "v1.0" },
-        input,
-        params,
-      };
-
-      const { executionId } = await submitRun(body);
-      printSubmitted(executionId);
-
-      if (opts.wait !== false) {
-        const data = await waitForCompletion(executionId);
-        printPollResult(data);
-      } else {
-        console.log("[info]");
-        console.log(`  message: Use 'weshop status ${executionId}' to check progress`);
-      }
-    } catch (err) {
-      printError(err);
-      process.exit(1);
+      await executeRun("ai-poster-from-images", "v1.0", { images: imageList, wait: opts.wait }, params, extraInput);
+    } else {
+      await executeRun("ai-poster-from-images", "v1.0", { wait: opts.wait }, params, extraInput);
     }
   });

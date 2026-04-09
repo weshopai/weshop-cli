@@ -1,6 +1,5 @@
 import { Command } from "commander";
-import { resolveImage, submitRun, waitForCompletion, type RunRequest } from "../client.js";
-import { printSubmitted, printPollResult, printError } from "../printer.js";
+import { executeRun } from "../run-helper.js";
 
 const DEFAULT_PROMPT =
   "Please don't change any elements that I provide. Generate a chaotic and creative multi-media collage with a completely randomized aesthetic. Combine a wide array of contrasting elements: vintage magazine cutouts, neon-colored glitch art, 19th-century botanical illustrations, and sharp vector geometric shapes. The composition should be an experimental mix of textures—including torn glossy paper, rough cardboard, transparent celluloid film, and metallic foil. Incorporate a clashing color palette that shifts randomly across the canvas. Features an unpredictable focal point, layered with 3D drop shadows to create a sense of physical depth. High resolution, maximalist detail, eclectic and avant-garde style.";
@@ -23,19 +22,11 @@ export const aiGroupPhotoGeneratorCmd = new Command("ai-group-photo-generator")
   .option("--task-name <name>", "Human-readable label for this run")
   .option("--no-wait", "Return immediately after submission; use 'weshop status <id>' to check later")
   .action(async (opts) => {
-    try {
-      const imageList: string[] = opts.image;
-      if (imageList.length > 10) { console.error("[error]\n  message: Maximum 10 images allowed"); process.exit(1); }
-      const urls: string[] = [];
-      for (const img of imageList) { const { url } = await resolveImage(img); urls.push(url); }
-      const params: Record<string, unknown> = { textDescription: opts.prompt ?? DEFAULT_PROMPT, images: urls };
-      if (opts.batch != null) params.batchCount = opts.batch;
-      const input: Record<string, unknown> = { originalImage: urls[0] };
-      if (opts.taskName) input.taskName = opts.taskName;
-      const body: RunRequest = { agent: { name: "ai-group-photo-generator", version: "v1.0" }, input, params };
-      const { executionId } = await submitRun(body);
-      printSubmitted(executionId);
-      if (opts.wait !== false) { printPollResult(await waitForCompletion(executionId)); }
-      else { console.log("[info]"); console.log(`  message: Use 'weshop status ${executionId}' to check progress`); }
-    } catch (err) { printError(err); process.exit(1); }
+    const imageList: string[] = opts.image;
+    if (imageList.length > 10) { console.error("[error]\n  message: Maximum 10 images allowed"); process.exit(1); }
+    const params: Record<string, unknown> = { textDescription: opts.prompt ?? DEFAULT_PROMPT };
+    if (opts.batch != null) params.batchCount = opts.batch;
+    const extraInput: Record<string, unknown> = {};
+    if (opts.taskName) extraInput.taskName = opts.taskName;
+    await executeRun("ai-group-photo-generator", "v1.0", { images: imageList, wait: opts.wait }, params, extraInput);
   });

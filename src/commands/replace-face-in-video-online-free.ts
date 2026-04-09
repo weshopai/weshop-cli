@@ -1,6 +1,5 @@
 import { Command } from "commander";
-import { resolveImage, submitRun, waitForCompletion, type RunRequest } from "../client.js";
-import { printSubmitted, printPollResult, printError } from "../printer.js";
+import { executeRun } from "../run-helper.js";
 
 export const replaceFaceInVideoOnlineFreeCmd = new Command("replace-face-in-video-online-free")
   .summary("AI video face swap — replace a face in a video with a reference face photo")
@@ -26,22 +25,17 @@ export const replaceFaceInVideoOnlineFreeCmd = new Command("replace-face-in-vide
   .option("--task-name <name>", "Human-readable label for this run")
   .option("--no-wait", "Return immediately after submission; use 'weshop status <id>' to check later")
   .action(async (opts) => {
-    try {
-      const { url: imageUrl } = await resolveImage(opts.image);
-      const params: Record<string, unknown> = {
-        videos: [opts.video],
-        images: [imageUrl],
-      };
-      if (opts.batch != null) params.batchCount = opts.batch;
-      const input: Record<string, unknown> = {
-        originalImage: imageUrl,
-        videos: [opts.video],
-      };
-      if (opts.taskName) input.taskName = opts.taskName;
-      const body: RunRequest = { agent: { name: "replace-face-in-video-online-free", version: "v1.0" }, input, params };
-      const { executionId } = await submitRun(body);
-      printSubmitted(executionId);
-      if (opts.wait !== false) { printPollResult(await waitForCompletion(executionId)); }
-      else { console.log("[info]"); console.log(`  message: Use 'weshop status ${executionId}' to check progress`); }
-    } catch (err) { printError(err); process.exit(1); }
+    const params: Record<string, unknown> = {};
+    if (opts.batch != null) params.batchCount = opts.batch;
+
+    const extraInput: Record<string, unknown> = {};
+    if (opts.taskName) extraInput.taskName = opts.taskName;
+
+    // image (face photo) goes through executeRun's single-image path; video goes via videos[]
+    await executeRun(
+      "replace-face-in-video-online-free", "v1.0",
+      { image: opts.image, videos: [opts.video], wait: opts.wait },
+      params,
+      extraInput
+    );
   });

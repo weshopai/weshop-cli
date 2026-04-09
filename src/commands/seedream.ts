@@ -1,6 +1,5 @@
 import { Command } from "commander";
-import { resolveImage, submitRun, waitForCompletion, type RunRequest } from "../client.js";
-import { printSubmitted, printPollResult, printError } from "../printer.js";
+import { executeRun } from "../run-helper.js";
 
 export const seedreamCmd = new Command("seedream")
   .summary("AI image generation — create and edit images with Seedream 5.0")
@@ -33,52 +32,21 @@ export const seedreamCmd = new Command("seedream")
   .option("--task-name <name>", "Human-readable label for this run")
   .option("--no-wait", "Return immediately after submission; use 'weshop status <id>' to check later")
   .action(async (opts) => {
-    try {
-      const params: Record<string, unknown> = {
-        textDescription: opts.prompt,
-      };
-      if (opts.batch != null) params.batchCount = opts.batch;
-      if (opts.imageSize) params.imageSize = opts.imageSize;
-      if (opts.aspectRatio) params.aspectRatio = opts.aspectRatio;
-      if (opts.outputFormat) params.outputFormat = opts.outputFormat;
-      if (opts.tool) params.tools = opts.tool;
-
-      const input: Record<string, unknown> = {};
-      if (opts.taskName) input.taskName = opts.taskName;
-
-      if (opts.image && opts.image.length > 0) {
-        const imageList: string[] = opts.image;
-        if (imageList.length > 14) {
-          console.error("[error]\n  message: Maximum 14 images allowed");
-          process.exit(1);
-        }
-        const urls: string[] = [];
-        for (const img of imageList) {
-          const { url } = await resolveImage(img);
-          urls.push(url);
-        }
-        params.images = urls;
-        input.originalImage = urls[0];
-      }
-
-      const body: RunRequest = {
-        agent: { name: "seedream", version: "v1.0" },
-        input,
-        params,
-      };
-
-      const { executionId } = await submitRun(body);
-      printSubmitted(executionId);
-
-      if (opts.wait !== false) {
-        const data = await waitForCompletion(executionId);
-        printPollResult(data);
-      } else {
-        console.log("[info]");
-        console.log(`  message: Use 'weshop status ${executionId}' to check progress`);
-      }
-    } catch (err) {
-      printError(err);
+    const imageList: string[] | undefined = opts.image;
+    if (imageList && imageList.length > 14) {
+      console.error("[error]\n  message: Maximum 14 images allowed");
       process.exit(1);
     }
+
+    const params: Record<string, unknown> = { textDescription: opts.prompt };
+    if (opts.batch != null) params.batchCount = opts.batch;
+    if (opts.imageSize) params.imageSize = opts.imageSize;
+    if (opts.aspectRatio) params.aspectRatio = opts.aspectRatio;
+    if (opts.outputFormat) params.outputFormat = opts.outputFormat;
+    if (opts.tool) params.tools = opts.tool;
+
+    const extraInput: Record<string, unknown> = {};
+    if (opts.taskName) extraInput.taskName = opts.taskName;
+
+    await executeRun("seedream", "v1.0", { images: imageList, wait: opts.wait }, params, extraInput);
   });

@@ -1,6 +1,5 @@
 import { Command } from "commander";
-import { resolveImage, submitRun, waitForCompletion, type RunRequest } from "../client.js";
-import { printSubmitted, printPollResult, printError } from "../printer.js";
+import { executeRun } from "../run-helper.js";
 
 const DEFAULT_PROMPT =
   "Analyze the characteristics of these two faces, try imagine the person with both face features merged together. Don't simply put the face on the other image, try to generate a merged face. Keep Image 2 as the baseline.";
@@ -24,46 +23,14 @@ export const aiFaceMergeCmd = new Command("ai-face-merge")
   .option("--task-name <name>", "Human-readable label for this run")
   .option("--no-wait", "Return immediately after submission; use 'weshop status <id>' to check later")
   .action(async (opts) => {
-    try {
-      const imageList: string[] = opts.image;
-      if (imageList.length !== 2) {
-        console.error("[error]\n  message: Exactly 2 images required for ai-face-merge");
-        process.exit(1);
-      }
-
-      const urls: string[] = [];
-      for (const img of imageList) {
-        const { url } = await resolveImage(img);
-        urls.push(url);
-      }
-
-      const params: Record<string, unknown> = {
-        textDescription: opts.prompt ?? DEFAULT_PROMPT,
-        images: urls,
-      };
-      if (opts.batch != null) params.batchCount = opts.batch;
-
-      const input: Record<string, unknown> = { originalImage: urls[0] };
-      if (opts.taskName) input.taskName = opts.taskName;
-
-      const body: RunRequest = {
-        agent: { name: "ai-face-merge", version: "v1.0" },
-        input,
-        params,
-      };
-
-      const { executionId } = await submitRun(body);
-      printSubmitted(executionId);
-
-      if (opts.wait !== false) {
-        const data = await waitForCompletion(executionId);
-        printPollResult(data);
-      } else {
-        console.log("[info]");
-        console.log(`  message: Use 'weshop status ${executionId}' to check progress`);
-      }
-    } catch (err) {
-      printError(err);
+    const imageList: string[] = opts.image;
+    if (imageList.length !== 2) {
+      console.error("[error]\n  message: Exactly 2 images required for ai-face-merge");
       process.exit(1);
     }
+    const params: Record<string, unknown> = { textDescription: opts.prompt ?? DEFAULT_PROMPT };
+    if (opts.batch != null) params.batchCount = opts.batch;
+    const extraInput: Record<string, unknown> = {};
+    if (opts.taskName) extraInput.taskName = opts.taskName;
+    await executeRun("ai-face-merge", "v1.0", { images: imageList, wait: opts.wait }, params, extraInput);
   });
