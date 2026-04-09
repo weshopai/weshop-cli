@@ -2,7 +2,7 @@ import fs from "node:fs";
 import path from "node:path";
 import { getCachedUrl, setCachedUrl } from "./cache.js";
 
-const BASE_URL = "https://openapi.weshop.ai/openapi";
+const BASE_URL = process.env.WESHOP_BASE_URL || "https://openapi.weshop.ai/openapi";
 
 // ── helpers ──────────────────────────────────────────────────────────
 
@@ -80,6 +80,8 @@ export async function submitRun(body: RunRequest): Promise<RunResponse> {
 export interface ExecutionResult {
   status: string;
   image?: string;
+  video?: string;
+  videoPoster?: string;
 }
 
 export interface Execution {

@@ -27,7 +27,7 @@ export const aiproductCmd = new Command("aiproduct")
   .option("--location-id <id>", "Replace background with a preset scene by ID (use 'weshop info aiproduct' to list)", parseInt)
   .option("--negative-prompt <text>", "Describe elements to avoid in the result")
   .option("--custom-mask <path|url>", "PNG mask image defining the protected region. Masked area is preserved, transparent area is editable. Must match source image dimensions")
-  .option("--batch <count>", "Number of images to generate, 1-16 (default: 4)", parseInt)
+  .option("--batch <count>", "Number of images to generate, 1-16 (default: 1)", (v) => parseInt(v, 10), 1)
   .option("--task-name <name>", "Human-readable label for this run")
   .option("--no-wait", "Return immediately after submission; use 'weshop status <id>' to check later")
   .action(async (opts) => {
@@ -39,7 +39,7 @@ export const aiproductCmd = new Command("aiproduct")
     if (opts.locationId) params.locationId = opts.locationId;
     if (opts.negativePrompt) params.negTextDescription = opts.negativePrompt;
     if (opts.customMask) params.customMaskUrl = (await resolveImage(opts.customMask)).url;
-    if (opts.batch) params.batchCount = opts.batch;
+    if (opts.batch != null) params.batchCount = opts.batch;
 
     const extraInput: Record<string, unknown> = {};
     if (opts.taskName) extraInput.taskName = opts.taskName;

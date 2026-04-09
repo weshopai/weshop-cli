@@ -15,7 +15,7 @@ export const aiposeCmd = new Command("aipose")
   .requiredOption("--image <path|url>", "Source image — local file path or public URL (local files are auto-uploaded)")
   .requiredOption("--prompt <text>", "Pose instruction describing the desired pose")
   .option("--gen-version <ver>", "Generation quality: lite (default) or pro")
-  .option("--batch <count>", "Number of images to generate, 1-16 (default: 4)", parseInt)
+  .option("--batch <count>", "Number of images to generate, 1-16 (default: 1)", (v) => parseInt(v, 10), 1)
   .option("--task-name <name>", "Human-readable label for this run")
   .option("--no-wait", "Return immediately after submission; use 'weshop status <id>' to check later")
   .action(async (opts) => {
@@ -23,7 +23,7 @@ export const aiposeCmd = new Command("aipose")
       textDescription: opts.prompt,
     };
     if (opts.genVersion) params.generateVersion = opts.genVersion;
-    if (opts.batch) params.batchCount = opts.batch;
+    if (opts.batch != null) params.batchCount = opts.batch;
 
     const extraInput: Record<string, unknown> = {};
     if (opts.taskName) extraInput.taskName = opts.taskName;

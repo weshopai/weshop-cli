@@ -31,7 +31,7 @@ export const virtualtryonCmd = new Command("virtualtryon")
   .option("--location-image <path|url>", "Background reference image — the generated scene will use this background")
   .option("--aspect-ratio <ratio>", "Output aspect ratio (weshopPro/bananaPro only): 1:1, 2:3, 3:2, 3:4, 4:3, 9:16, 16:9, 21:9")
   .option("--image-size <size>", "Output resolution (bananaPro only): 1K, 2K, or 4K")
-  .option("--batch <count>", "Number of images to generate, 1-16 (default: 4)", parseInt)
+  .option("--batch <count>", "Number of images to generate, 1-16 (default: 1)", (v) => parseInt(v, 10), 1)
   .option("--task-name <name>", "Human-readable label for this run")
   .option("--no-wait", "Return immediately after submission; use 'weshop status <id>' to check later")
   .action(async (opts) => {
@@ -42,7 +42,7 @@ export const virtualtryonCmd = new Command("virtualtryon")
     if (opts.prompt) params.textDescription = opts.prompt;
     if (opts.aspectRatio) params.aspectRatio = opts.aspectRatio;
     if (opts.imageSize) params.imageSize = opts.imageSize;
-    if (opts.batch) params.batchCount = opts.batch;
+    if (opts.batch != null) params.batchCount = opts.batch;
 
     const extraInput: Record<string, unknown> = {};
     if (opts.modelImage) extraInput.fashionModelImage = (await resolveImage(opts.modelImage)).url;

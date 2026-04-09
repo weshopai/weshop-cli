@@ -24,11 +24,20 @@ export function printPollResult(data: PollResponse) {
   }
 
   if (exec.result.length) {
-    console.log(`  imageCount: ${exec.result.length}`);
+    const isVideo = exec.result.some((r) => r.video);
+    const mediaLabel = isVideo ? "video" : "image";
+    console.log(`  ${mediaLabel}Count: ${exec.result.length}`);
     exec.result.forEach((r, i) => {
-      console.log(`  image[${i}]:`);
+      console.log(`  ${mediaLabel}[${i}]:`);
       console.log(`    status: ${r.status}`);
-      console.log(`    url: ${r.image ?? ""}`);
+      if (r.video) {
+        console.log(`    url: ${r.video}`);
+        if (r.videoPoster) {
+          console.log(`    poster: ${r.videoPoster}`);
+        }
+      } else {
+        console.log(`    url: ${r.image ?? ""}`);
+      }
     });
   }
 }
