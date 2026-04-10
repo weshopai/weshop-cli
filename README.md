@@ -60,7 +60,7 @@ Run `weshop <command> --help` to see each command's full parameters, enum values
 | `ai-christmas-photo` | AI Christmas photo generator — transform a portrait into a festive Christmas scene |
 | `ai-clothes-changer` | AI clothes changer — dress a person (image 1) in the garment shown in another photo (image 2) |
 | `ai-collage-maker` | AI collage maker — create a chaotic multi-media collage from up to 10 images |
-| `ai-dog` | AI pet portrait generator — create or transform pet photos with a text prompt |
+| `ai-dog` | AI pet portrait generator — create or transform pet photos with a text prompt; image is optional |
 | `ai-elf` | AI elf filter — transform a portrait into a fantasy elf character |
 | `ai-face-merge` | AI face merge — blend two faces together into a single realistic portrait |
 | `ai-feet` | AI feet generator — generate a realistic low-angle bare feet photo from a portrait |
@@ -108,7 +108,7 @@ Run `weshop <command> --help` to see each command's full parameters, enum values
 | `demon-slayer-oc-maker` | AI Demon Slayer OC maker — transform a person into a Kimetsu no Yaiba anime character |
 | `dress-remover-magic-eraser` | AI dress remover — erase a dress and replace with a bikini while keeping body proportions |
 | `expandimage` | Expand the canvas to a larger size — AI fills the new area to blend naturally |
-| `face-forge` | AI face morph & face swap — generate or transform portraits |
+| `face-forge` | AI face morph and face swap — generate or transform portraits |
 | `fat-ai` | AI plus-size body transformation — visualize how a person would look extremely overweight |
 | `firered-image-edit` | FireRed image editor — edit or generate images with high fidelity using FireRed open-source model |
 | `flat-lay` | AI flat-lay clothing generator — create professional flat-lay product images from a photo |
@@ -131,12 +131,12 @@ Run `weshop <command> --help` to see each command's full parameters, enum values
 | `photo-to-bikini-ai` | AI photo to bikini converter — transform a person photo into a bikini image |
 | `pregnant-ai` | Visualize how a person would look pregnant — transforms a portrait photo |
 | `ps2-filter` | AI PS2 filter — transform a photo into a retro PS2-era Sims game character |
-| `qwen-image-edit` | AI image editing — edit or generate images with natural language instructions |
+| `qwen-image-edit` | AI image editing — edit or generate images with natural language instructions using Qwen |
 | `random-animal-generator` | AI random animal generator — generate a hyper-realistic wildlife photo of any animal |
 | `remove-filter-from-photo` | AI filter remover — remove photo filters and restore natural image colors |
 | `removebg` | Remove the background or replace it with a solid color |
 | `see-through-clothes-fitler` | See-through clothes filter — make clothing appear sheer and see-through |
-| `seedream` | AI image generation — create and edit images with Seedream 5.0 |
+| `seedream` | AI image generation — create and edit images using Seedream 5.0 model by ByteDance |
 | `sex-ai-generator` | Sex AI generator — transform a person photo into a bikini model image or video |
 | `sexy-ai-pics` | AI sexy pics generator — generate stylish and attractive photos from a person image |
 | `skin-color-changer` | AI skin color changer — change a person's skin tone while preserving face details |
@@ -170,7 +170,7 @@ Run `weshop <command> --help` to see each command's full parameters, enum values
 | `remove-text-from-video-online-free` | Remove text from video online free — remove text overlays or watermarks from a video |
 | `replace-face-in-video-online-free` | AI video face swap — replace a face in a video with a reference face photo |
 | `seedance` | Seedance video generator — create cinematic AI videos using Seedance 2.0 by ByteDance |
-| `sora-2` | Sora 2 video generator — create cinematic videos with realistic physics using OpenAI Sora 2 |
+| `sora-2` | Cinematic video generation with realistic physics using OpenAI Sora 2 |
 | `video-resolution-enhancer-online-free` | Video resolution enhancer online free — upscale and enhance video resolution using AI |
 | `video-upscaler-online-free` | Video upscaler online free — upscale and enhance video quality using AI |
 | `video-watermark-remover` | AI video watermark remover — remove watermarks, logos, or text from a video |
