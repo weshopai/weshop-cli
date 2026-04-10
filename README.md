@@ -2,7 +2,7 @@
 
 One command. Studio-quality images and videos.
 
-`weshop-cli` turns [WeShop AI](https://www.weshop.ai) into a command-line tool — virtual try-on, model swap, background replace, pose change, canvas expand, AI video generation, video enhancement, and much more. Built for developers and AI agents who want to generate production-ready fashion, product, and creative media without touching a browser.
+`weshop-cli` turns [WeShop AI](https://www.weshop.ai/tools) into a command-line tool — virtual try-on, model swap, background replace, pose change, canvas expand, AI video generation, video enhancement, and much more. Built for developers and AI agents who want to generate production-ready fashion, product, and creative media without touching a browser.
 
 ```bash
 # Virtual try-on: put a garment onto a model reference
