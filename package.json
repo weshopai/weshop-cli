@@ -1,6 +1,6 @@
 {
   "name": "weshop-cli",
-  "version": "0.2.1",
+  "version": "0.2.2",
   "description": "CLI & Agent tool for WeShop AI — virtual try-on, model swap, background replace, pose change, and more",
   "type": "module",
   "bin": {
