@@ -110,6 +110,9 @@ import { customBikiniCmd } from "./commands/custom-bikini.js";
 import { swimsuitTryOnHaulCmd } from "./commands/swimsuit-try-on-haul.js";
 import { stringBikiniBeautyContestCmd } from "./commands/string-bikini-beauty-contest.js";
 import { aiGroupPhotoGeneratorCmd } from "./commands/ai-group-photo-generator.js";
+import { aiShirtRemoverCmd } from "./commands/ai-shirt-remover.js";
+import { aiPantsRemoverCmd } from "./commands/ai-pants-remover.js";
+import { aiLingerieRemoverCmd } from "./commands/ai-lingerie-remover.js";
 import { removeSubtitlesFromVideoOnlineFreeCmd } from "./commands/remove-subtitles-from-video-online-free.js";
 import { aiTextRemoverFromVideoCmd } from "./commands/ai-text-remover-from-video.js";
 import { logoRemoverFromVideoCmd } from "./commands/logo-remover-from-video.js";
@@ -123,6 +126,13 @@ import { free4kVideoUpscalerCmd } from "./commands/free-4k-video-upscaler.js";
 import { seeThroughClothesFitlerCmd } from "./commands/see-through-clothes-fitler.js";
 import { hairColorTryOnCmd } from "./commands/hair-color-try-on.js";
 import { imageMixerCmd } from "./commands/image-mixer.js";
+import { aiCouplePhotoMakerCmd } from "./commands/ai-couple-photo-maker.js";
+import { aiHeadshotGeneratorCmd } from "./commands/ai-headshot-generator.js";
+import { photoWrinkleRemoverCmd } from "./commands/photo-wrinkle-remover.js";
+import { aiBlemishRemoverCmd } from "./commands/ai-blemish-remover.js";
+import { aiInfographicGeneratorCmd } from "./commands/ai-infographic-generator.js";
+import { aiLogoGeneratorCmd } from "./commands/ai-logo-generator.js";
+import { flowchartGeneratorCmd } from "./commands/flowchart-generator.js";
 
 const program = new Command()
   .name("weshop")
@@ -251,6 +261,9 @@ program.addCommand(customBikiniCmd);
 program.addCommand(swimsuitTryOnHaulCmd);
 program.addCommand(stringBikiniBeautyContestCmd);
 program.addCommand(aiGroupPhotoGeneratorCmd);
+program.addCommand(aiShirtRemoverCmd);
+program.addCommand(aiPantsRemoverCmd);
+program.addCommand(aiLingerieRemoverCmd);
 program.addCommand(removeSubtitlesFromVideoOnlineFreeCmd);
 program.addCommand(aiTextRemoverFromVideoCmd);
 program.addCommand(logoRemoverFromVideoCmd);
@@ -264,5 +277,12 @@ program.addCommand(free4kVideoUpscalerCmd);
 program.addCommand(seeThroughClothesFitlerCmd);
 program.addCommand(hairColorTryOnCmd);
 program.addCommand(imageMixerCmd);
+program.addCommand(aiCouplePhotoMakerCmd);
+program.addCommand(aiHeadshotGeneratorCmd);
+program.addCommand(photoWrinkleRemoverCmd);
+program.addCommand(aiBlemishRemoverCmd);
+program.addCommand(aiInfographicGeneratorCmd);
+program.addCommand(aiLogoGeneratorCmd);
+program.addCommand(flowchartGeneratorCmd);
 
 program.parse();
