@@ -1,5 +1,12 @@
 #!/usr/bin/env node
 import { Command } from "commander";
+import { readFileSync } from "fs";
+import { fileURLToPath } from "url";
+import { dirname, resolve } from "path";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = dirname(__filename);
+const pkg = JSON.parse(readFileSync(resolve(__dirname, "../package.json"), "utf-8"));
 import { uploadCmd } from "./commands/upload.js";
 import { statusCmd } from "./commands/status.js";
 import { infoCmd } from "./commands/info.js";
@@ -126,7 +133,7 @@ import { imageMixerCmd } from "./commands/image-mixer.js";
 
 const program = new Command()
   .name("weshop")
-  .version("0.2.1")
+  .version(pkg.version)
   .addHelpCommand(false)
   .description(
     "WeShop AI — generate, edit, and transform images and videos from the command line.\n\n" +
