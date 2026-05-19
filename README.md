@@ -57,9 +57,11 @@ Run `weshop <command> --help` to see each command's full parameters, enum values
 | `ai-babe` | AI babe generator — generate photorealistic attractive images from a person photo |
 | `ai-bikini-model` | AI bikini model — transform a person photo into a bikini model image or video |
 | `ai-bikini-photo-editor` | AI bikini photo editor — edit a person photo into a bikini scene with a required prompt |
+| `ai-blemish-remover` | AI blemish remover — clean up acne and blemishes while keeping natural skin and facial details |
 | `ai-christmas-photo` | AI Christmas photo generator — transform a portrait into a festive Christmas scene |
 | `ai-clothes-changer` | AI clothes changer — dress a person (image 1) in the garment shown in another photo (image 2) |
 | `ai-collage-maker` | AI collage maker — create a chaotic multi-media collage from up to 10 images |
+| `ai-couple-photo-maker` | AI couple photo maker — combine two portrait photos into one realistic romantic couple image |
 | `ai-dog` | AI pet portrait generator — create or transform pet photos with a text prompt; image is optional |
 | `ai-elf` | AI elf filter — transform a portrait into a fantasy elf character |
 | `ai-face-merge` | AI face merge — blend two faces together into a single realistic portrait |
@@ -71,10 +73,15 @@ Run `weshop <command> --help` to see each command's full parameters, enum values
 | `ai-group-photo-generator` | AI group photo generator — create a creative group photo or collage from up to 10 images |
 | `ai-hair-color-changer` | AI hair color changer — change a person's hair color while preserving hairstyle and details |
 | `ai-hairstyle-changer` | AI hairstyle changer — change a person's hairstyle from a photo or text description |
+| `ai-headshot-generator` | AI headshot generator — create professional ID-style headshots from a single portrait photo |
 | `ai-hot-girl-image` | AI hot girl image — transform a person photo into a bikini model image or video |
 | `ai-image-combiner` | AI image combiner — naturally merge two photos into a single cohesive image |
+| `ai-infographic-generator` | AI infographic generator — turn a text description into a professional infographic layout |
 | `ai-landscape-design-free` | AI landscape designer — redesign a yard or outdoor space with a new landscape style |
 | `ai-lingerie-models` | AI lingerie models — transform a person photo into a bikini model image or video |
+| `ai-lingerie-remover` | AI lingerie remover — transform lingerie outfit photos into bikini look images or videos |
+| `ai-logo-generator` | AI logo generator — design brand logos from text descriptions, no reference image required |
+| `ai-pants-remover` | AI pants remover — transform pants outfit photos into bikini look images or videos |
 | `ai-photoshoot` | AI photoshoot — generate a professional photoshoot by combining a character photo and a reference scene |
 | `ai-poster-from-images` | AI poster generator — create a designed poster from up to 5 reference images |
 | `ai-poster` | AI poster generator — create a designed poster from text prompt and optional reference images |
@@ -82,6 +89,7 @@ Run `weshop <command> --help` to see each command's full parameters, enum values
 | `ai-selfie` | AI selfie generator — transform a portrait into a natural iPhone-style selfie photo |
 | `ai-sexy-portrait` | AI sexy portrait — transform a person photo into a bikini model image or video |
 | `ai-sexy-teens` | AI sexy teens — transform a person photo into a bikini model image or video |
+| `ai-shirt-remover` | AI shirt remover — transform a shirt outfit photo into a bikini look image or video |
 | `ai-spray-paint` | AI spray paint stencil maker — convert a photo into a black-and-white spray paint stencil |
 | `ai-swimsuit-model` | AI swimsuit model — transform a person photo into a swimsuit model image |
 | `ai-tattoo-generator` | AI tattoo generator — create a tattoo design try-on from text or reference image |
@@ -112,11 +120,13 @@ Run `weshop <command> --help` to see each command's full parameters, enum values
 | `fat-ai` | AI plus-size body transformation — visualize how a person would look extremely overweight |
 | `firered-image-edit` | FireRed image editor — edit or generate images with high fidelity using FireRed open-source model |
 | `flat-lay` | AI flat-lay clothing generator — create professional flat-lay product images from a photo |
+| `flowchart-generator` | AI flowchart generator — create clear flowcharts from structured text descriptions |
 | `free-ai-girlfriend-generator` | AI girlfriend generator — generate a realistic AI girlfriend portrait from text or reference image |
 | `free-sexy-ai-generator` | Free sexy AI generator — transform a person photo into a bikini model image or video |
 | `futuristic-elegance` | Dress a person in futuristic harajuku fashion — cinematic sci-fi outfit transformation |
 | `gender-swap` | AI gender swap — transform a portrait to the opposite gender while preserving identity |
 | `ghibli-art-create` | AI Ghibli art creator — transform any photo into Studio Ghibli anime art style |
+| `gpt-image` | GPT Image 2 image generator — create high-quality images, text-rich visuals, and product photography from prompts |
 | `grok-imagine` | Grok Imagine image generator — create high-resolution images from text using xAI Aurora |
 | `hair-color-try-on` | Hair color try-on — change a person's hair color while preserving hairstyle and details |
 | `happy-woman-bikini-ai-pic` | Happy woman bikini AI pic — transform a person photo into a bikini model image or video |
@@ -126,9 +136,11 @@ Run `weshop <command> --help` to see each command's full parameters, enum values
 | `midjourney` | Midjourney image generator — create high-quality images using Midjourney v6.1, v7, or Niji 6 |
 | `mugshot-creator` | AI mugshot creator — generate a police-style mugshot photo from a portrait |
 | `murder-drones-oc` | AI Murder Drones OC maker — transform a person into a Murder Drones-inspired robotic drone character |
+| `nano-banana-edit` | Nano Banana image editor — generate or edit images with Nano Banana, Nano Banana Pro, or Nano Banana 2 using Google's Gemini-based models |
 | `outfit-generator` | AI outfit generator — redesign a complete outfit on a person photo based on style prompt |
 | `personalized-swimsuit` | Personalized swimsuit — transform a person photo into a bikini model image or video |
 | `photo-to-bikini-ai` | AI photo to bikini converter — transform a person photo into a bikini image |
+| `photo-wrinkle-remover` | Photo wrinkle remover — smooth facial wrinkles in portrait photos while keeping natural skin texture |
 | `pregnant-ai` | Visualize how a person would look pregnant — transforms a portrait photo |
 | `ps2-filter` | AI PS2 filter — transform a photo into a retro PS2-era Sims game character |
 | `qwen-image-edit` | AI image editing — edit or generate images with natural language instructions using Qwen |
@@ -163,7 +175,10 @@ Run `weshop <command> --help` to see each command's full parameters, enum values
 | `free-online-video-quality-enhancer` | Free online video quality enhancer — upscale and enhance video quality using AI |
 | `gemini-watermark-remover` | Gemini watermark remover — remove watermarks, logos, or text from a video |
 | `grok-imagine-video` | Grok Imagine video generator — create cinematic AI videos with native audio using xAI |
+| `hailuo-ai` | Hailuo AI video generator — create cinematic AI videos from images and text using MiniMax Hailuo models |
+| `happyhorse` | HappyHorse AI video generator — create cinematic text-to-video and image-to-video clips with native 1080p output |
 | `improve-video-quality-online-free` | Improve video quality online free — upscale and enhance video quality using AI |
+| `kling-motion-control` | Kling Motion Control — transfer motion from a reference video onto a character image with identity preservation |
 | `kling` | AI video generation — create cinematic videos from images and text using Kling |
 | `logo-remover-from-video` | Logo remover from video — remove logos or watermarks from a video |
 | `remove-subtitles-from-video-online-free` | Remove subtitles from video online free — remove subtitles or text overlays from a video |
@@ -171,9 +186,11 @@ Run `weshop <command> --help` to see each command's full parameters, enum values
 | `replace-face-in-video-online-free` | AI video face swap — replace a face in a video with a reference face photo |
 | `seedance` | Seedance video generator — create cinematic AI videos using Seedance 2.0 by ByteDance |
 | `sora-2` | Cinematic video generation with realistic physics using OpenAI Sora 2 |
+| `veo-ai` | Veo 3 AI video generator — create cinematic videos from images and text using Google Veo 3.1 models |
 | `video-resolution-enhancer-online-free` | Video resolution enhancer online free — upscale and enhance video resolution using AI |
 | `video-upscaler-online-free` | Video upscaler online free — upscale and enhance video quality using AI |
 | `video-watermark-remover` | AI video watermark remover — remove watermarks, logos, or text from a video |
+| `vidu-ai` | Vidu Q3 AI video generator — create cinematic short videos with Vidu Q3 Pro or Pro Fast modes |
 | `wan-ai` | Wan AI video generator — create AI videos from images and text using Wan AI |
 
 ## Example: virtual try-on
