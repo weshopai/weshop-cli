@@ -126,6 +126,7 @@ Run `weshop <command> --help` to see each command's full parameters, enum values
 | `futuristic-elegance` | Dress a person in futuristic harajuku fashion — cinematic sci-fi outfit transformation |
 | `gender-swap` | AI gender swap — transform a portrait to the opposite gender while preserving identity |
 | `ghibli-art-create` | AI Ghibli art creator — transform any photo into Studio Ghibli anime art style |
+| `gpt-image` | GPT Image 2 image generator — create high-quality images, text-rich visuals, and product photography from prompts |
 | `grok-imagine` | Grok Imagine image generator — create high-resolution images from text using xAI Aurora |
 | `hair-color-try-on` | Hair color try-on — change a person's hair color while preserving hairstyle and details |
 | `happy-woman-bikini-ai-pic` | Happy woman bikini AI pic — transform a person photo into a bikini model image or video |
@@ -135,6 +136,7 @@ Run `weshop <command> --help` to see each command's full parameters, enum values
 | `midjourney` | Midjourney image generator — create high-quality images using Midjourney v6.1, v7, or Niji 6 |
 | `mugshot-creator` | AI mugshot creator — generate a police-style mugshot photo from a portrait |
 | `murder-drones-oc` | AI Murder Drones OC maker — transform a person into a Murder Drones-inspired robotic drone character |
+| `nano-banana-edit` | Nano Banana image editor — generate or edit images with Nano Banana, Nano Banana Pro, or Nano Banana 2 using Google's Gemini-based models |
 | `outfit-generator` | AI outfit generator — redesign a complete outfit on a person photo based on style prompt |
 | `personalized-swimsuit` | Personalized swimsuit — transform a person photo into a bikini model image or video |
 | `photo-to-bikini-ai` | AI photo to bikini converter — transform a person photo into a bikini image |
@@ -173,7 +175,10 @@ Run `weshop <command> --help` to see each command's full parameters, enum values
 | `free-online-video-quality-enhancer` | Free online video quality enhancer — upscale and enhance video quality using AI |
 | `gemini-watermark-remover` | Gemini watermark remover — remove watermarks, logos, or text from a video |
 | `grok-imagine-video` | Grok Imagine video generator — create cinematic AI videos with native audio using xAI |
+| `hailuo-ai` | Hailuo AI video generator — create cinematic AI videos from images and text using MiniMax Hailuo models |
+| `happyhorse` | HappyHorse AI video generator — create cinematic text-to-video and image-to-video clips with native 1080p output |
 | `improve-video-quality-online-free` | Improve video quality online free — upscale and enhance video quality using AI |
+| `kling-motion-control` | Kling Motion Control — transfer motion from a reference video onto a character image with identity preservation |
 | `kling` | AI video generation — create cinematic videos from images and text using Kling |
 | `logo-remover-from-video` | Logo remover from video — remove logos or watermarks from a video |
 | `remove-subtitles-from-video-online-free` | Remove subtitles from video online free — remove subtitles or text overlays from a video |
@@ -181,9 +186,11 @@ Run `weshop <command> --help` to see each command's full parameters, enum values
 | `replace-face-in-video-online-free` | AI video face swap — replace a face in a video with a reference face photo |
 | `seedance` | Seedance video generator — create cinematic AI videos using Seedance 2.0 by ByteDance |
 | `sora-2` | Cinematic video generation with realistic physics using OpenAI Sora 2 |
+| `veo-ai` | Veo 3 AI video generator — create cinematic videos from images and text using Google Veo 3.1 models |
 | `video-resolution-enhancer-online-free` | Video resolution enhancer online free — upscale and enhance video resolution using AI |
 | `video-upscaler-online-free` | Video upscaler online free — upscale and enhance video quality using AI |
 | `video-watermark-remover` | AI video watermark remover — remove watermarks, logos, or text from a video |
+| `vidu-ai` | Vidu Q3 AI video generator — create cinematic short videos with Vidu Q3 Pro or Pro Fast modes |
 | `wan-ai` | Wan AI video generator — create AI videos from images and text using Wan AI |
 
 ## Example: virtual try-on
