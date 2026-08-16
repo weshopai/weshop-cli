@@ -232,8 +232,9 @@ Output:
 ```bash
 # Kling — cinematic video with audio
 weshop kling \
-  --image ./scene.png \
-  --prompt 'Camera slowly pans across a misty forest' \
+  --image ./first.png \
+  --image ./last.png \
+  --prompt 'Person walks from the doorway to the window' \
   --model Kling_3_0 \
   --duration 8s \
   --generate-audio true

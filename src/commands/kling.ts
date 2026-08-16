@@ -4,14 +4,16 @@ import { executeRun } from "../run-helper.js";
 export const klingCmd = new Command("kling")
   .summary("AI video generation — create cinematic videos from images and text using Kling")
   .description(
-    "AI video generation — create cinematic videos from images and text using Kling.\n\n" +
-    "Provide a reference image and a text prompt describing the desired motion or scene.\n" +
-    "Results are returned as video URLs in the result section.\n\n" +
+    "AI video generation — create cinematic videos from images and text using Kling.\n" +
+    "Results come back in video[N].url.\n\n" +
+    "Provide one image as the first frame, or two images as first frame + last frame.\n" +
+    "Image 1 is the first frame; image 2 is the last frame.\n" +
+    "Last frame is supported for Kling_3_0, Kling_2_6, Kling_2_5_Turbo, and Kling_2_1 (not Kling_2_1_Master).\n\n" +
     "Model (--model):\n" +
     "  Kling_3_0         Kling 3.0 — latest, supports 3s-15s duration and audio (default)\n" +
     "  Kling_2_6         Kling 2.6 — supports audio\n" +
     "  Kling_2_5_Turbo   Kling 2.5 Turbo — fast generation\n" +
-    "  Kling_2_1_Master  Kling 2.1 Master — high quality\n" +
+    "  Kling_2_1_Master  Kling 2.1 Master — high quality; first frame only\n" +
     "  Kling_2_1         Kling 2.1\n\n" +
     "Duration (--duration):\n" +
     "  Kling_3_0:  3s, 4s, 5s, 6s, 7s, 8s, 9s, 10s, 11s, 12s, 13s, 14s, 15s  (default: 5s)\n" +
@@ -20,10 +22,11 @@ export const klingCmd = new Command("kling")
     "  Only supported for Kling_3_0 and Kling_2_6. Ignored for other models.\n\n" +
     "Examples:\n" +
     "  weshop kling --image ./scene.png --prompt 'Camera slowly pans across a misty forest'\n" +
+    "  weshop kling --image ./first.png --image ./last.png --prompt 'Person walks from the doorway to the window' --model Kling_3_0\n" +
     "  weshop kling --image ./portrait.png --prompt 'Person turns and smiles' --model Kling_3_0 --duration 5s\n" +
     "  weshop kling --image ./product.png --prompt 'Product rotates on a pedestal' --model Kling_3_0 --duration 8s --generate-audio true"
   )
-  .requiredOption("--image <path|url>", "Reference image — local file path or public URL")
+  .requiredOption("--image <path|url...>", "First frame, plus optional last frame — local file paths or URLs (1–2; last frame supported on Kling_3_0, Kling_2_6, Kling_2_5_Turbo, Kling_2_1)")
   .requiredOption("--prompt <text>", "Describe the desired motion or scene")
   .option("--model <name>", "Kling model version (default: Kling_3_0)")
   .option("--duration <time>", "Video duration, e.g. 5s, 10s (default: 5s)")
@@ -32,6 +35,16 @@ export const klingCmd = new Command("kling")
   .option("--task-name <name>", "Human-readable label for this run")
   .option("--no-wait", "Return immediately after submission; use 'weshop status <id>' to check later")
   .action(async (opts) => {
+    const imageList: string[] = opts.image;
+    if (imageList.length > 2) {
+      console.error("[error]\n  message: Maximum 2 images allowed (image 1 = first frame, image 2 = last frame)");
+      process.exit(1);
+    }
+    if (imageList.length === 2 && (opts.model ?? "Kling_3_0") === "Kling_2_1_Master") {
+      console.error("[error]\n  message: Kling_2_1_Master does not support a last frame; use Kling_3_0, Kling_2_6, Kling_2_5_Turbo, or Kling_2_1");
+      process.exit(1);
+    }
+
     const params: Record<string, unknown> = {
       textDescription: opts.prompt,
     };
@@ -43,5 +56,5 @@ export const klingCmd = new Command("kling")
     const extraInput: Record<string, unknown> = {};
     if (opts.taskName) extraInput.taskName = opts.taskName;
 
-    await executeRun("kling", "v1.0", { image: opts.image, wait: opts.wait }, params, extraInput);
+    await executeRun("kling", "v1.0", { images: imageList, wait: opts.wait }, params, extraInput);
   });
