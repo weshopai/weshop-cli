@@ -6,11 +6,13 @@ export const seedanceCmd = new Command("seedance")
   .description(
     "Generate cinematic AI videos using Seedance models by ByteDance.\n" +
     "Results come back in video[N].url.\n\n" +
+    "Supports one input image, or up to 9 reference images (Seedance_20 multimodal).\n" +
+    "When using multiple images, refer to them in the prompt as image 1, image 2, etc.\n\n" +
     "Model (--model):\n" +
-    "  Seedance_20          Seedance 2.0 (default)\n" +
-    "  Seedance_15_Pro      Seedance 1.5 Pro\n" +
-    "  Seedance_10_Pro      Seedance 1.0 Pro\n" +
-    "  Seedance_10_Pro_Fast Seedance 1.0 Pro Fast\n\n" +
+    "  Seedance_20          Seedance 2.0 (default) — multi-image reference supported\n" +
+    "  Seedance_15_Pro      Seedance 1.5 Pro — uses the first image as first frame\n" +
+    "  Seedance_10_Pro      Seedance 1.0 Pro — uses the first image as first frame\n" +
+    "  Seedance_10_Pro_Fast Seedance 1.0 Pro Fast — uses the first image as first frame\n\n" +
     "Duration (--duration):\n" +
     "  Seedance_20/1.5_Pro: 4s-15s  (default: 4s)\n" +
     "  Seedance_10_Pro/Fast: 2s-12s  (default: 4s)\n\n" +
@@ -20,10 +22,11 @@ export const seedanceCmd = new Command("seedance")
     "Generate audio (--generate-audio): true or false (Seedance_20 and 1.5_Pro only, default: true)\n\n" +
     "Examples:\n" +
     "  weshop seedance --image ./scene.png --prompt 'Cinematic drone shot over a city'\n" +
+    "  weshop seedance --image ./keyframe.png --image ./character.png --prompt 'Image 1 is the scene; image 2 is the character walking through it' --model Seedance_20\n" +
     "  weshop seedance --image ./photo.png --prompt 'Person walks in slow motion' --model Seedance_15_Pro --duration 8s\n" +
     "  weshop seedance --image ./landscape.png --prompt 'Sunset timelapse' --aspect-ratio 16:9 --no-wait"
   )
-  .requiredOption("--image <path|url>", "Input image — local file path or URL")
+  .requiredOption("--image <path|url...>", "Input / reference images — local file paths or URLs (1–9; multi-image best with Seedance_20)")
   .requiredOption("--prompt <text>", "Describe the desired video scene")
   .option("--model <name>", "Seedance model version (default: Seedance_20)")
   .option("--duration <time>", "Video duration, e.g. 4s, 8s (default: 4s)")
@@ -33,6 +36,12 @@ export const seedanceCmd = new Command("seedance")
   .option("--task-name <name>", "Human-readable label for this run")
   .option("--no-wait", "Return immediately after submission; use 'weshop status <id>' to check later")
   .action(async (opts) => {
+    const imageList: string[] = opts.image;
+    if (imageList.length > 9) {
+      console.error("[error]\n  message: Maximum 9 images allowed");
+      process.exit(1);
+    }
+
     const params: Record<string, unknown> = {
       textDescription: opts.prompt,
       modelName: opts.model ?? "Seedance_20",
@@ -45,5 +54,5 @@ export const seedanceCmd = new Command("seedance")
     const extraInput: Record<string, unknown> = {};
     if (opts.taskName) extraInput.taskName = opts.taskName;
 
-    await executeRun("seedance", "v1.0", { image: opts.image, wait: opts.wait }, params, extraInput);
+    await executeRun("seedance", "v1.0", { images: imageList, wait: opts.wait }, params, extraInput);
   });

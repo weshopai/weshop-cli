@@ -240,9 +240,10 @@ weshop kling \
 
 # Seedance — ByteDance video model
 weshop seedance \
-  --image ./photo.png \
-  --prompt 'Person walks in slow motion' \
-  --model Seedance_15_Pro \
+  --image ./keyframe.png \
+  --image ./character.png \
+  --prompt 'Image 1 is the scene; image 2 is the character walking through it' \
+  --model Seedance_20 \
   --duration 8s \
   --aspect-ratio 16:9
 
