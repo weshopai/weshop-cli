@@ -178,14 +178,19 @@ Run `weshop <command> --help` to see each command's full parameters, enum values
 | `hailuo-ai` | Hailuo AI video generator — create cinematic AI videos from images and text using MiniMax Hailuo models |
 | `happyhorse` | HappyHorse AI video generator — create cinematic text-to-video and image-to-video clips with native 1080p output |
 | `improve-video-quality-online-free` | Improve video quality online free — upscale and enhance video quality using AI |
+| `kling-O1` | Kling O1 AI video generator — create cinematic videos with Omni One control via text, reference images, first/last frames, or a reference video |
 | `kling-motion-control` | Kling Motion Control — transfer motion from a reference video onto a character image with identity preservation |
+| `kling-v3-omni` | Kling 3.0 Omni — create multimodal AI videos from text, reference images, and an optional reference video, with native audio |
 | `kling` | AI video generation — create cinematic videos from images and text using Kling |
 | `logo-remover-from-video` | Logo remover from video — remove logos or watermarks from a video |
+| `minimax-h3` | MiniMax H3 — build multimodal AI videos from text, reference images, and optional reference videos and audio, including image-to-video first/last frame control |
 | `remove-subtitles-from-video-online-free` | Remove subtitles from video online free — remove subtitles or text overlays from a video |
 | `remove-text-from-video-online-free` | Remove text from video online free — remove text overlays or watermarks from a video |
 | `replace-face-in-video-online-free` | AI video face swap — replace a face in a video with a reference face photo |
+| `seedance-25` | Seedance 2.5 — create native 4–30 second cinematic videos from text, with optional reference images, videos, and audio by ByteDance |
 | `seedance` | Seedance video generator — create cinematic AI videos using Seedance 2.0 by ByteDance |
 | `sora-2` | Cinematic video generation with realistic physics using OpenAI Sora 2 |
+| `sulphur2` | Sulphur 2 AI video generator — create cinematic short videos from a still image and prompt using the LTX 2.3 video model |
 | `veo-ai` | Veo 3 AI video generator — create cinematic videos from images and text using Google Veo 3.1 models |
 | `video-resolution-enhancer-online-free` | Video resolution enhancer online free — upscale and enhance video resolution using AI |
 | `video-upscaler-online-free` | Video upscaler online free — upscale and enhance video quality using AI |

@@ -8,6 +8,8 @@ export interface RunOptions {
   images?: string[];
   /** Video URL(s) — for video-processing agents. Not auto-uploaded; must be a hosted URL. */
   videos?: string[];
+  /** Audio URL(s) — for multimodal video agents. Not auto-uploaded; must be a hosted URL. */
+  audios?: string[];
   /** If false (from --no-wait), return immediately after submission. */
   wait?: boolean;
 }
@@ -28,6 +30,14 @@ export async function executeRun(
       opts.videos.forEach((v) => console.log(`  videoUrl: ${v}`));
       input.videos = opts.videos;
       params.videos = params.videos ?? opts.videos;
+    }
+
+    // ── audio input ──────────────────────────────────────────────────────────
+    if (opts.audios && opts.audios.length > 0) {
+      console.log("[audio]");
+      opts.audios.forEach((a) => console.log(`  audioUrl: ${a}`));
+      input.audios = opts.audios;
+      params.audios = params.audios ?? opts.audios;
     }
 
     // ── multi-image input ────────────────────────────────────────────────────
