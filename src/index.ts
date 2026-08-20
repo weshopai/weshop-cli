@@ -3,6 +3,14 @@ import { Command } from "commander";
 import { readFileSync } from "fs";
 import { fileURLToPath } from "url";
 import { dirname, resolve } from "path";
+import { consumePrivateRunControls } from "./private-run-controls.js";
+
+try {
+  process.argv = consumePrivateRunControls(process.argv);
+} catch (err) {
+  console.error(`Error: ${err instanceof Error ? err.message : String(err)}`);
+  process.exit(1);
+}
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

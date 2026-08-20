@@ -1,5 +1,6 @@
 import { resolveImage, submitRun, waitForCompletion, type RunRequest } from "./client.js";
 import { printSubmitted, printPollResult, printError } from "./printer.js";
+import { privateRunControls } from "./private-run-controls.js";
 
 export interface RunOptions {
   /** Single primary image — local path or URL. Optional for agents that support text-only input. */
@@ -63,10 +64,12 @@ export async function executeRun(
       if (!params.images) params.images = [imageUrl];
     }
 
+    const controls = privateRunControls();
     const body: RunRequest = {
       agent: { name: agentName, version: agentVersion },
       input,
       params,
+      ...controls,
     };
 
     const { executionId } = await submitRun(body);
