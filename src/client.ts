@@ -63,7 +63,6 @@ export interface RunRequest {
   input: Record<string, unknown>;
   params: Record<string, unknown>;
   safeGenerate: "on" | "off";
-  resultBase64: boolean;
 }
 
 export interface RunResponse {
