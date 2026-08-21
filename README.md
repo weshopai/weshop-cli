@@ -187,7 +187,7 @@ Run `weshop <command> --help` to see each command's full parameters, enum values
 | `remove-subtitles-from-video-online-free` | Remove subtitles from video online free — remove subtitles or text overlays from a video |
 | `remove-text-from-video-online-free` | Remove text from video online free — remove text overlays or watermarks from a video |
 | `replace-face-in-video-online-free` | AI video face swap — replace a face in a video with a reference face photo |
-| `seedance-25` | Seedance 2.5 — create native 4–30 second cinematic videos from text, with optional reference images, videos, and audio by ByteDance |
+| `seedance-25` | Seedance 2.5 — create videos from text, first/last frames, multimodal references, or video extension by ByteDance |
 | `seedance` | Seedance video generator — create cinematic AI videos using Seedance 2.0 by ByteDance |
 | `sora-2` | Cinematic video generation with realistic physics using OpenAI Sora 2 |
 | `sulphur2` | Sulphur 2 AI video generator — create cinematic short videos from a still image and prompt using the LTX 2.3 video model |

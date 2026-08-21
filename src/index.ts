@@ -324,4 +324,4 @@ program.addCommand(veoAiCmd);
 program.addCommand(viduAiCmd);
 program.addCommand(sulphur2Cmd);
 
-program.parse();
+await program.parseAsync();
