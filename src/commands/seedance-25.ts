@@ -6,7 +6,7 @@ export const seedance25Cmd = new Command("seedance-25")
   .summary("Seedance 2.5 — create videos from text, first/last frames, multimodal references, or video extension")
   .description(
     "Create cinematic videos with Seedance 2.5 by ByteDance.\n" +
-    "Results come back in video[N].url. Add --return-last-frame to also receive the generated final-frame image URL.\n\n" +
+    "Results come back in video[N].url. --return-last-frame requests a final-frame image URL when WeShop successfully persists it.\n\n" +
     "Text-only generation is supported. Optionally pass up to 30 reference images, 10 reference videos, and 10 reference audios (50 total).\n" +
     "First/last-frame mode cannot be combined with ordinary references or video extension. Extension mode supports up to 10 videos including the target video.\n" +
     "When using multiple images, refer to them in the prompt as image 1, image 2, etc.\n" +
@@ -34,7 +34,7 @@ export const seedance25Cmd = new Command("seedance-25")
   .option("--aspect-ratio <ratio>", "Output aspect ratio, including adaptive (default: 3:4)")
   .option("--resolution <resolution>", "Output resolution: 480p, 720p, or 1080p (default: 720p)")
   .option("--output-format <format>", "Output format: mp4 or mov (default: mp4)")
-  .option("--return-last-frame", "Return the generated video's final-frame image URL")
+  .option("--return-last-frame", "Request the generated video's final-frame image URL (best effort)")
   .option("--generate-audio <bool>", "Generate native audio: true (default) or false")
   .option("--batch <count>", "Number of videos to generate, 1-16 (default: 1)", (v) => parseInt(v, 10), 1)
   .option("--task-name <name>", "Human-readable label for this run")
@@ -76,8 +76,8 @@ export const seedance25Cmd = new Command("seedance-25")
 
     const referenceVideos = [...(videos ?? [])];
     if (opts.extendVideo) {
-      const existingIndex = referenceVideos.indexOf(opts.extendVideo);
-      if (existingIndex >= 0) referenceVideos.splice(existingIndex, 1);
+      const nonExtendVideos = referenceVideos.filter((video) => video !== opts.extendVideo);
+      referenceVideos.splice(0, referenceVideos.length, ...nonExtendVideos);
       referenceVideos.unshift(opts.extendVideo);
     }
     if (referenceVideos.length > 10) throw new Error("Maximum 10 videos allowed, including --extend-video");

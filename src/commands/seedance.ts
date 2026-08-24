@@ -11,7 +11,7 @@ export const seedanceCmd = new Command("seedance")
   .summary("Seedance video generator — create cinematic AI videos using Seedance 2.0 by ByteDance")
   .description(
     "Generate cinematic AI videos using Seedance models by ByteDance.\n" +
-    "Results come back in video[N].url. Add --return-last-frame to also receive the generated final-frame image URL.\n\n" +
+    "Results come back in video[N].url. --return-last-frame requests a final-frame image URL when WeShop successfully persists it.\n\n" +
     "Seedance 2.0 and Mini support text-only generation, first/last frames, multimodal references, and video extension.\n" +
     "When using multiple images, refer to them in the prompt as image 1, image 2, etc.\n\n" +
     "Model (--model):\n" +
@@ -47,7 +47,7 @@ export const seedanceCmd = new Command("seedance")
   .option("--duration <time>", "Video duration: 4s-15s (default: 4s)")
   .option("--aspect-ratio <ratio>", "Output aspect ratio (2.0/Mini default: 16:9)")
   .option("--resolution <resolution>", "2.0: 480p, 720p, 1080p, 4k; Mini: 480p or 720p")
-  .option("--return-last-frame", "Return the generated video's final-frame image URL")
+  .option("--return-last-frame", "Request the generated video's final-frame image URL (best effort)")
   .option("--generate-audio <bool>", "Generate audio: true (default) or false (Seedance_20 and 1.5_Pro only)")
   .option("--batch <count>", "Number of videos to generate, 1-16 (default: 1)", (v) => parseInt(v, 10), 1)
   .option("--task-name <name>", "Human-readable label for this run")
