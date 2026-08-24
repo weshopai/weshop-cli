@@ -35,6 +35,9 @@ export function printPollResult(data: PollResponse) {
         if (r.videoPoster) {
           console.log(`    poster: ${r.videoPoster}`);
         }
+        if (r.lastFrame) {
+          console.log(`    lastFrame: ${r.lastFrame}`);
+        }
       } else {
         console.log(`    url: ${r.image ?? ""}`);
       }

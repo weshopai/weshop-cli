@@ -84,6 +84,7 @@ export interface ExecutionResult {
   image?: string;
   video?: string;
   videoPoster?: string;
+  lastFrame?: string;
 }
 
 export interface Execution {
