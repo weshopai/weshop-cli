@@ -6,7 +6,7 @@ export const seedance25Cmd = new Command("seedance-25")
   .summary("Seedance 2.5 — create videos from text, first/last frames, multimodal references, or video extension")
   .description(
     "Create cinematic videos with Seedance 2.5 by ByteDance.\n" +
-    "Results come back in video[N].url.\n\n" +
+    "Results come back in video[N].url. Add --return-last-frame to also receive the generated final-frame image URL.\n\n" +
     "Text-only generation is supported. Optionally pass up to 30 reference images, 10 reference videos, and 10 reference audios.\n" +
     "When using multiple images, refer to them in the prompt as image 1, image 2, etc.\n" +
     "--video, --extend-video, and --audio must be hosted URLs (local video/audio upload is not supported).\n\n" +
@@ -17,7 +17,8 @@ export const seedance25Cmd = new Command("seedance-25")
     "  weshop seedance-25 --prompt 'Cinematic drone shot over a coastal city at golden hour'\n" +
     "  weshop seedance-25 --image ./character.png --image ./scene.png --prompt 'Image 1 is the character walking through the scene in image 2' --duration 12s --aspect-ratio 16:9\n" +
     "  weshop seedance-25 --first-frame ./first.png --last-frame ./last.png --prompt 'A product rotates slowly in a studio' --duration 8s --resolution 1080p\n" +
-    "  weshop seedance-25 --extend-video https://example.com/source.mov --extend-direction backward --video https://example.com/style.mp4 --prompt 'Continue video 1 naturally' --output-format mov --duration -1"
+    "  weshop seedance-25 --extend-video https://example.com/source.mov --extend-direction backward --video https://example.com/style.mp4 --prompt 'Continue video 1 naturally' --output-format mov --duration -1\n" +
+    "  weshop seedance-25 --prompt 'A slow aerial move over a valley' --return-last-frame"
   )
   .option("--image <path|url...>", "Reference images — local file paths or URLs (up to 30, optional)")
   .option("--video <url...>", "Optional reference videos — hosted URLs only (up to 10)")
@@ -32,6 +33,7 @@ export const seedance25Cmd = new Command("seedance-25")
   .option("--aspect-ratio <ratio>", "Output aspect ratio, including adaptive (default: 3:4)")
   .option("--resolution <resolution>", "Output resolution: 480p, 720p, or 1080p (default: 720p)")
   .option("--output-format <format>", "Output format: mp4 or mov (default: mp4)")
+  .option("--return-last-frame", "Return the generated video's final-frame image URL")
   .option("--generate-audio <bool>", "Generate native audio: true (default) or false")
   .option("--batch <count>", "Number of videos to generate, 1-16 (default: 1)", (v) => parseInt(v, 10), 1)
   .option("--task-name <name>", "Human-readable label for this run")
@@ -85,6 +87,7 @@ export const seedance25Cmd = new Command("seedance-25")
     }
     if (opts.resolution) params.resolution = opts.resolution;
     if (opts.outputFormat) params.outputFormat = opts.outputFormat;
+    if (opts.returnLastFrame) params.returnLastFrame = true;
     if (opts.batch != null) params.batchCount = opts.batch;
 
     const extraInput: Record<string, unknown> = {};
