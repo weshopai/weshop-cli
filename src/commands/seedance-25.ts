@@ -7,7 +7,8 @@ export const seedance25Cmd = new Command("seedance-25")
   .description(
     "Create cinematic videos with Seedance 2.5 by ByteDance.\n" +
     "Results come back in video[N].url. Add --return-last-frame to also receive the generated final-frame image URL.\n\n" +
-    "Text-only generation is supported. Optionally pass up to 30 reference images, 10 reference videos, and 10 reference audios.\n" +
+    "Text-only generation is supported. Optionally pass up to 30 reference images, 10 reference videos, and 10 reference audios (50 total).\n" +
+    "First/last-frame mode cannot be combined with ordinary references or video extension. Extension mode supports up to 10 videos including the target video.\n" +
     "When using multiple images, refer to them in the prompt as image 1, image 2, etc.\n" +
     "--video, --extend-video, and --audio must be hosted URLs (local video/audio upload is not supported).\n\n" +
     "Duration (--duration): -1 or 4s-30s (default: 4s)\n" +
@@ -21,7 +22,7 @@ export const seedance25Cmd = new Command("seedance-25")
     "  weshop seedance-25 --prompt 'A slow aerial move over a valley' --return-last-frame"
   )
   .option("--image <path|url...>", "Reference images — local file paths or URLs (up to 30, optional)")
-  .option("--video <url...>", "Optional reference videos — hosted URLs only (up to 10)")
+  .option("--video <url...>", "Optional reference videos — hosted URLs only (up to 10 total with --extend-video)")
   .option("--audio <url...>", "Optional reference audios — hosted URLs only (up to 10)")
   .option("--first-frame <path|url>", "First frame — local image path or URL")
   .option("--last-frame <path|url>", "Last frame — local image path or URL; requires --first-frame")
@@ -43,7 +44,12 @@ export const seedance25Cmd = new Command("seedance-25")
     const videos: string[] | undefined = opts.video;
     const audios: string[] | undefined = opts.audio;
     if (opts.lastFrame && !opts.firstFrame) throw new Error("--last-frame requires --first-frame");
+    if (opts.firstFrame && (imageList?.length || videos?.length || audios?.length || opts.extendVideo)) {
+      throw new Error("--first-frame cannot be combined with reference media or --extend-video");
+    }
     if (opts.extendVideo && !/^https?:\/\//.test(opts.extendVideo)) throw new Error("--extend-video must be a hosted URL");
+    if (videos?.some((video) => !/^https?:\/\//.test(video))) throw new Error("--video values must be hosted URLs");
+    if (audios?.some((audio) => !/^https?:\/\//.test(audio))) throw new Error("--audio values must be hosted URLs");
     if (opts.extendVideo && !["forward", "backward"].includes(opts.extendDirection)) {
       throw new Error("--extend-direction must be forward or backward when --extend-video is set");
     }
@@ -64,6 +70,9 @@ export const seedance25Cmd = new Command("seedance-25")
       console.error("[error]\n  message: Maximum 10 audios allowed");
       process.exit(1);
     }
+    if ((imageList?.length ?? 0) + (videos?.length ?? 0) + (audios?.length ?? 0) > 50) {
+      throw new Error("Maximum 50 reference media items allowed");
+    }
 
     const referenceVideos = [...(videos ?? [])];
     if (opts.extendVideo) {
@@ -71,6 +80,7 @@ export const seedance25Cmd = new Command("seedance-25")
       if (existingIndex >= 0) referenceVideos.splice(existingIndex, 1);
       referenceVideos.unshift(opts.extendVideo);
     }
+    if (referenceVideos.length > 10) throw new Error("Maximum 10 videos allowed, including --extend-video");
 
     const params: Record<string, unknown> = {
       textDescription: opts.prompt,
