@@ -62,8 +62,7 @@ export interface RunRequest {
   agent: { name: string; version: string };
   input: Record<string, unknown>;
   params: Record<string, unknown>;
-  safeGenerat: "on" | "off";
-  resultBase64: boolean;
+  safeGenerate: "on" | "off";
 }
 
 export interface RunResponse {
