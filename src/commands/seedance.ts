@@ -8,27 +8,25 @@ function invalidSeedanceOption(message: string): never {
 }
 
 export const seedanceCmd = new Command("seedance")
-    .summary("Seedance video generator — create cinematic AI videos using Seedance 2.0, 2.0 Mini, 1.5 Pro, or 1.0 by ByteDance")
+    .summary("Seedance video generator — create cinematic AI videos using Seedance 2.0, 2.0 Mini, or 1.0 by ByteDance")
     .description(
         "Generate cinematic AI videos using Seedance models by ByteDance.\n" +
         "Results come back in video[N].url. --return-last-frame requests a final-frame image URL when WeShop successfully persists it.\n\n" +
         "Seedance 2.0 and Mini support text-only generation, first/last frames, optional reference images, videos, and audio, plus video extension.\n" +
         "When using multiple images, refer to them in the prompt as image 1, image 2, etc.\n" +
-        "Agent version stays v1.0; existing Seedance_20 / 1.5 / 1.0 model names are unchanged.\n\n" +
+        "Agent version stays v1.0; existing Seedance_20 / 1.0 model names are unchanged.\n\n" +
         "Model (--model):\n" +
         "  Seedance_20          Seedance 2.0 (default) — 480p, 720p, 1080p, 4k\n" +
         "  Seedance_20_Mini     Seedance 2.0 Mini — 480p, 720p, lower cost\n" +
-        "  Seedance_15_Pro      Seedance 1.5 Pro — uses the first image as first frame\n" +
         "  Seedance_10_Pro      Seedance 1.0 Pro — uses the first image as first frame\n" +
         "  Seedance_10_Pro_Fast Seedance 1.0 Pro Fast — uses the first image as first frame\n\n" +
         "Duration (--duration):\n" +
-        "  Seedance_20/Mini/1.5_Pro: 4s-15s  (default: 4s)\n" +
+        "  Seedance_20/Mini: 4s-15s  (default: 4s)\n" +
         "  Seedance_10_Pro/Fast: 2s-12s  (default: 4s)\n\n" +
         "Aspect ratio (--aspect-ratio):\n" +
         "  Seedance_20/Mini: 21:9, 16:9, 9:16, 3:4, 4:3, 1:1, adaptive  (default: 16:9)\n" +
-        "  Seedance_15_Pro: 21:9, 16:9, 9:16, 3:4, 4:3, 1:1  (default: 3:4)\n" +
         "  Seedance_10_Pro/Fast: 16:9, 9:16, 3:4, 4:3, 1:1  (default: 3:4)\n\n" +
-        "Generate audio (--generate-audio): true or false (Seedance_20, Seedance_20_Mini, and 1.5_Pro only, default: true)\n\n" +
+        "Generate audio (--generate-audio): true or false (Seedance_20 and Seedance_20_Mini only, default: true)\n\n" +
         "Examples:\n" +
         "  weshop seedance --prompt 'Cinematic drone shot over a city' --resolution 720p\n" +
         "  weshop seedance --image ./keyframe.png --image ./character.png --prompt 'Image 1 is the scene; image 2 is the character walking through it' --model Seedance_20\n" +
@@ -49,7 +47,7 @@ export const seedanceCmd = new Command("seedance")
     .option("--aspect-ratio <ratio>", "Output aspect ratio (2.0/Mini default: 16:9)")
     .option("--resolution <resolution>", "2.0: 480p, 720p, 1080p, 4k; Mini: 480p or 720p")
     .option("--return-last-frame", "Request the generated video's final-frame image URL (best effort)")
-    .option("--generate-audio <bool>", "Generate audio: true (default) or false (Seedance_20, Seedance_20_Mini, and 1.5_Pro only)")
+    .option("--generate-audio <bool>", "Generate audio: true (default) or false (Seedance_20 and Seedance_20_Mini only)")
     .option("--batch <count>", "Number of videos to generate, 1-16 (default: 1)", (v) => parseInt(v, 10), 1)
     .option("--task-name <name>", "Human-readable label for this run")
     .option("--no-wait", "Return immediately after submission; use 'weshop status <id>' to check later")
