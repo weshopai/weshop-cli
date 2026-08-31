@@ -1,4 +1,4 @@
-import { resolveImage, submitRun, waitForCompletion, type RunRequest } from "./client.js";
+import { createRunIdempotencyKey, resolveImage, submitRun, waitForCompletion, type RunRequest } from "./client.js";
 import { printSubmitted, printPollResult, printError } from "./printer.js";
 import { privateRunControls } from "./private-run-controls.js";
 
@@ -72,7 +72,10 @@ export async function executeRun(
       ...controls,
     };
 
-    const { executionId } = await submitRun(body);
+    // One key represents one logical CLI invocation. Reusing it for transport
+    // retries prevents a second task, while a new CLI invocation gets a new key.
+    const idempotencyKey = createRunIdempotencyKey();
+    const { executionId } = await submitRun(body, idempotencyKey);
     printSubmitted(executionId);
 
     if (opts.wait !== false) {

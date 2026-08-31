@@ -1,5 +1,6 @@
 import fs from "node:fs";
 import path from "node:path";
+import { randomUUID } from "node:crypto";
 import { getCachedUrl, setCachedUrl } from "./cache.js";
 
 const BASE_URL = process.env.WESHOP_BASE_URL || "https://openapi.weshop.ai/openapi";
@@ -70,10 +71,17 @@ export interface RunResponse {
   taskId: string;
 }
 
-export async function submitRun(body: RunRequest): Promise<RunResponse> {
+export function createRunIdempotencyKey(): string {
+  return randomUUID();
+}
+
+export async function submitRun(body: RunRequest, idempotencyKey: string): Promise<RunResponse> {
   return request<RunResponse>("/agent/runs", {
     method: "POST",
-    headers: { "Content-Type": "application/json" },
+    headers: {
+      "Content-Type": "application/json",
+      "Idempotency-Key": idempotencyKey,
+    },
     body: JSON.stringify(body),
   });
 }
