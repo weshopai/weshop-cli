@@ -72,12 +72,13 @@ export async function executeRun(
       ...controls,
     };
 
-    const { executionId } = await submitRun(body);
-    printSubmitted(executionId);
+    const run = await submitRun(body);
+    const { executionId } = run;
+    printSubmitted(run);
 
     if (opts.wait !== false) {
       const data = await waitForCompletion(executionId);
-      printPollResult(data);
+      printPollResult(data, run);
     } else {
       console.log("[info]");
       console.log(`  message: Use 'weshop status ${executionId}' to check progress`);

@@ -1,11 +1,11 @@
-import type { PollResponse } from "./client.js";
+import type { PollResponse, RunResponse } from "./client.js";
 
-export function printSubmitted(executionId: string) {
+export function printSubmitted(data: RunResponse) {
   console.log("[submitted]");
-  console.log(`  executionId: ${executionId}`);
+  console.log(`  executionId: ${data.executionId}`);
 }
 
-export function printPollResult(data: PollResponse) {
+export function printPollResult(data: PollResponse, billing?: Pick<RunResponse, "powerConsumption" | "powerBalanceAmount">) {
   const exec = data.executions.at(-1);
   if (!exec) {
     console.log("[result]");
@@ -18,6 +18,12 @@ export function printPollResult(data: PollResponse) {
   console.log(`  agent: ${data.agentName} ${data.agentVersion}`);
   console.log(`  executionId: ${exec.executionId}`);
   console.log(`  status: ${exec.status}`);
+  if (Number.isFinite(billing?.powerConsumption)) {
+    console.log(`  powerConsumption: ${billing!.powerConsumption}`);
+  }
+  if (Number.isFinite(billing?.powerBalanceAmount)) {
+    console.log(`  powerBalanceAmount: ${billing!.powerBalanceAmount}`);
+  }
 
   if (exec.status === "Failed") {
     console.log("  message: Generation failed");

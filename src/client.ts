@@ -68,6 +68,8 @@ export interface RunRequest {
 export interface RunResponse {
   executionId: string;
   taskId: string;
+  powerConsumption?: number;
+  powerBalanceAmount?: number;
 }
 
 export async function submitRun(body: RunRequest): Promise<RunResponse> {
