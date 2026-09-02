@@ -1,4 +1,4 @@
-import { Command } from "commander";
+import { Command, InvalidArgumentError } from "commander";
 import { fetchAgentInfo } from "../client.js";
 import { printError } from "../printer.js";
 
@@ -16,7 +16,32 @@ interface AgentInfoData {
   locations?: PresetItem[];
   fashionModels?: PresetItem[];
   backgrounds?: PresetItem[];
+  pagination?: {
+    page: number;
+    pageSize: number;
+    locations?: ResourcePagination;
+    fashionModels?: ResourcePagination;
+  };
   [key: string]: unknown;
+}
+
+interface ResourcePagination {
+  total: number;
+  isLastPage: boolean;
+}
+
+function parsePositiveInteger(value: string, max?: number): number {
+  if (!/^\d+$/.test(value)) {
+    throw new InvalidArgumentError("must be a positive integer");
+  }
+  const parsed = Number(value);
+  if (!Number.isSafeInteger(parsed) || parsed <= 0) {
+    throw new InvalidArgumentError("must be a positive integer");
+  }
+  if (max !== undefined && parsed > max) {
+    throw new InvalidArgumentError(`must not exceed ${max}`);
+  }
+  return parsed;
 }
 
 function printPresetList(label: string, items: PresetItem[]) {
@@ -38,14 +63,17 @@ export const infoCmd = new Command("info")
     "  weshop info aimodel\n" +
     "  weshop info removeBG\n" +
     "  weshop info aimodel --version v1.0\n" +
+    "  weshop info aimodel --page 2 --page-size 100\n" +
     "  weshop info aimodel --json"
   )
   .argument("<agent>", `Agent name: ${AGENTS.join(", ")}`)
   .option("--version <ver>", "Agent version (default: v1.0)", "v1.0")
+  .option("--page <number>", "Page number (default: 1)", (value) => parsePositiveInteger(value), 1)
+  .option("--page-size <number>", "Items per resource (default: 50, max: 100)", (value) => parsePositiveInteger(value, 100), 50)
   .option("--json", "Output raw JSON instead of formatted list")
-  .action(async (agent: string, opts: { version: string; json?: boolean }) => {
+  .action(async (agent: string, opts: { version: string; page: number; pageSize: number; json?: boolean }) => {
     try {
-      const data = (await fetchAgentInfo(agent, opts.version)) as AgentInfoData;
+      const data = (await fetchAgentInfo(agent, opts.version, opts.page, opts.pageSize)) as AgentInfoData;
 
       if (opts.json) {
         console.log(JSON.stringify(data, null, 2));
@@ -54,6 +82,15 @@ export const infoCmd = new Command("info")
 
       console.log("[info]");
       console.log(`  agent: ${agent} ${opts.version}`);
+      if (data.pagination) {
+        console.log(`  page: ${data.pagination.page}  pageSize: ${data.pagination.pageSize}`);
+        if (data.pagination.locations) {
+          console.log(`  locations: total=${data.pagination.locations.total}  isLastPage=${data.pagination.locations.isLastPage}`);
+        }
+        if (data.pagination.fashionModels) {
+          console.log(`  fashionModels: total=${data.pagination.fashionModels.total}  isLastPage=${data.pagination.fashionModels.isLastPage}`);
+        }
+      }
 
       let hasPresets = false;
 
@@ -72,7 +109,7 @@ export const infoCmd = new Command("info")
 
       // print any other array fields we didn't expect
       for (const [key, val] of Object.entries(data)) {
-        if (["locations", "fashionModels", "backgrounds"].includes(key)) continue;
+        if (["locations", "fashionModels", "backgrounds", "pagination"].includes(key)) continue;
         if (Array.isArray(val) && val.length) {
           hasPresets = true;
           printPresetList(key, val as PresetItem[]);

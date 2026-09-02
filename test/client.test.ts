@@ -1,7 +1,9 @@
 import assert from "node:assert/strict";
 import test from "node:test";
 
-import { createRunIdempotencyKey, submitRun, type RunRequest } from "../src/client.js";
+import { createRunIdempotencyKey, fetchAgentInfo, submitRun, type RunRequest } from "../src/client.js";
+
+process.env.WESHOP_API_KEY = "test-api-key";
 
 const body: RunRequest = {
   agent: { name: "z-image", version: "v1.0" },
@@ -36,4 +38,48 @@ test("submitRun forwards the logical-run idempotency key", async () => {
 
 test("separate CLI runs receive different idempotency keys", () => {
   assert.notEqual(createRunIdempotencyKey(), createRunIdempotencyKey());
+});
+
+test("fetchAgentInfo sends the default pagination parameters", async () => {
+  const urls: string[] = [];
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (input) => {
+    urls.push(String(input));
+    return new Response(JSON.stringify({ success: true, data: {} }), {
+      headers: { "Content-Type": "application/json" },
+    });
+  };
+
+  try {
+    await fetchAgentInfo("aimodel", "v1.0");
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+
+  const url = new URL(urls[0]);
+  assert.equal(url.searchParams.get("agentName"), "aimodel");
+  assert.equal(url.searchParams.get("agentVersion"), "v1.0");
+  assert.equal(url.searchParams.get("page"), "1");
+  assert.equal(url.searchParams.get("pageSize"), "50");
+});
+
+test("fetchAgentInfo sends custom pagination parameters", async () => {
+  const urls: string[] = [];
+  const originalFetch = globalThis.fetch;
+  globalThis.fetch = async (input) => {
+    urls.push(String(input));
+    return new Response(JSON.stringify({ success: true, data: {} }), {
+      headers: { "Content-Type": "application/json" },
+    });
+  };
+
+  try {
+    await fetchAgentInfo("aiproduct", "v1.0", 3, 100);
+  } finally {
+    globalThis.fetch = originalFetch;
+  }
+
+  const url = new URL(urls[0]);
+  assert.equal(url.searchParams.get("page"), "3");
+  assert.equal(url.searchParams.get("pageSize"), "100");
 });

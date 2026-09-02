@@ -112,8 +112,19 @@ export async function pollRun(executionId: string): Promise<PollResponse> {
   return request<PollResponse>(`/agent/runs/${executionId}`);
 }
 
-export async function fetchAgentInfo(agentName: string, agentVersion: string): Promise<unknown> {
-  return request<unknown>(`/v1/agent/info?agentName=${encodeURIComponent(agentName)}&agentVersion=${encodeURIComponent(agentVersion)}`);
+export async function fetchAgentInfo(
+  agentName: string,
+  agentVersion: string,
+  page = 1,
+  pageSize = 50,
+): Promise<unknown> {
+  const query = new URLSearchParams({
+    agentName,
+    agentVersion,
+    page: String(page),
+    pageSize: String(pageSize),
+  });
+  return request<unknown>(`/v1/agent/info?${query.toString()}`);
 }
 
 /** Poll until terminal status, calling `onTick` each iteration. */

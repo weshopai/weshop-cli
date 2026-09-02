@@ -268,6 +268,9 @@ For `aimodel` and `aiproduct`, using preset scene/model IDs gives the best quali
 # See available scenes and models
 weshop info aimodel
 
+# Browse additional pages (default: page 1, 50 items; max page size: 100)
+weshop info aimodel --page 2 --page-size 100
+
 # Use a preset scene
 weshop aimodel \
   --image ./model.png \
