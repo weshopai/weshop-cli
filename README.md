@@ -21,6 +21,7 @@ weshop removebg --image ./product.png --mask-type autoSubjectSegment --bg-hex '#
 - **Agent-friendly.** Structured `[key]: value` output that any LLM agent can parse. No colors, no spinners, no noise.
 - **Local files just work.** Pass a local path to `--image` and it auto-uploads. Same file won't upload twice (cached by path + size + mtime).
 - **Blocking or async.** Waits for results by default. Add `--no-wait` to get the execution ID and poll later with `weshop status`.
+- **Estimate before running.** Add `--calculate-power` to any generation command to see the expected power consumption without creating or executing a task.
 
 ## Quick start
 
@@ -258,6 +259,29 @@ weshop sora-2 \
   --image ./landscape.png \
   --prompt 'Time-lapse of clouds moving' \
   --duration 8s
+```
+
+## Estimate power consumption
+
+Use the same command and parameters you would use for generation, then add
+`--calculate-power`. Local images are uploaded as usual so media-dependent
+pricing uses the same request shape, but no generation task is created.
+
+```bash
+weshop kling \
+  --image ./scene.png \
+  --model Kling_3_0 \
+  --duration 8s \
+  --calculate-power
+```
+
+```text
+[power-estimate]
+  agent: kling v1.0
+  totalPower: 120
+  type: video
+  exclusive: false
+  paidPowerNotEnough: false
 ```
 
 ## Example: use preset IDs for best results

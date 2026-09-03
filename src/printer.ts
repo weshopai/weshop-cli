@@ -1,4 +1,4 @@
-import type { PollResponse, RunResponse } from "./client.js";
+import { APIRequestError, type PollResponse, type PowerEstimateResponse, type RunResponse } from "./client.js";
 
 export function printSubmitted(data: RunResponse) {
   console.log("[submitted]");
@@ -56,8 +56,23 @@ export function printUpload(url: string) {
   console.log(`  imageUrl: ${url}`);
 }
 
+export function printPowerEstimate(agentName: string, agentVersion: string, data: PowerEstimateResponse) {
+  console.log("[power-estimate]");
+  console.log(`  agent: ${agentName} ${agentVersion}`);
+  console.log(`  totalPower: ${data.totalPower}`);
+  console.log(`  type: ${data.type}`);
+  console.log(`  exclusive: ${data.exclusive}`);
+  console.log(`  paidPowerNotEnough: ${data.paidPowerNotEnough}`);
+  if (data.isEstimated !== undefined) {
+    console.log(`  isEstimated: ${data.isEstimated}`);
+  }
+}
+
 export function printError(err: unknown) {
   const msg = err instanceof Error ? err.message : String(err);
   console.error("[error]");
+  if (err instanceof APIRequestError) {
+    console.error(`  code: ${err.code}`);
+  }
   console.error(`  message: ${msg}`);
 }

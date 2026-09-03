@@ -1,6 +1,7 @@
-import { createRunIdempotencyKey, resolveImage, submitRun, waitForCompletion, type RunRequest } from "./client.js";
-import { printSubmitted, printPollResult, printError } from "./printer.js";
+import { createRunIdempotencyKey, estimatePower, resolveImage, submitRun, waitForCompletion, type RunRequest } from "./client.js";
+import { printSubmitted, printPollResult, printPowerEstimate, printError } from "./printer.js";
 import { privateRunControls } from "./private-run-controls.js";
+import { isCalculatePowerRequested } from "./execution-mode.js";
 
 export interface RunOptions {
   /** Single primary image — local path or URL. Optional for agents that support text-only input. */
@@ -71,6 +72,12 @@ export async function executeRun(
       params,
       ...controls,
     };
+
+    if (isCalculatePowerRequested()) {
+      const estimate = await estimatePower(body);
+      printPowerEstimate(agentName, agentVersion, estimate);
+      return;
+    }
 
     // One key represents one logical CLI invocation. Reusing it for transport
     // retries prevents a second task, while a new CLI invocation gets a new key.

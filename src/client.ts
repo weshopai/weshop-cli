@@ -5,6 +5,18 @@ import { getCachedUrl, setCachedUrl } from "./cache.js";
 
 const BASE_URL = process.env.WESHOP_BASE_URL || "https://openapi.weshop.ai/openapi";
 
+export class APIRequestError extends Error {
+  constructor(
+    public readonly code: string,
+    message: string,
+    public readonly retryable = false,
+    public readonly status?: number,
+  ) {
+    super(message);
+    this.name = "APIRequestError";
+  }
+}
+
 // ── helpers ──────────────────────────────────────────────────────────
 
 function getApiKey(): string {
@@ -32,11 +44,30 @@ async function request<T>(
       ...init.headers,
     },
   });
-  const json = (await res.json()) as { success: boolean; data: T; error?: { code: string; message: string } };
-  if (!json.success) {
-    throw new Error(`API error: ${json.error?.code} — ${json.error?.message}`);
+  const raw = await res.text();
+  let json: {
+    success?: boolean;
+    data?: T;
+    error?: { code?: string; message?: string; retryable?: boolean };
+    code?: string | number;
+    msg?: string;
+  };
+  try {
+    json = JSON.parse(raw);
+  } catch {
+    throw new APIRequestError(
+      "INVALID_RESPONSE",
+      `API returned ${res.status} ${res.statusText || "with a non-JSON response"}`,
+      res.status >= 500,
+      res.status,
+    );
   }
-  return json.data;
+  if (!res.ok || json.success !== true) {
+    const code = json.error?.code ?? (json.code != null ? String(json.code) : `HTTP_${res.status}`);
+    const message = json.error?.message ?? json.msg ?? `API request failed with HTTP ${res.status}`;
+    throw new APIRequestError(code, message, json.error?.retryable ?? res.status >= 500, res.status);
+  }
+  return json.data as T;
 }
 
 // ── public API ───────────────────────────────────────────────────────
@@ -84,6 +115,22 @@ export async function submitRun(body: RunRequest, idempotencyKey: string): Promi
       "Content-Type": "application/json",
       "Idempotency-Key": idempotencyKey,
     },
+    body: JSON.stringify(body),
+  });
+}
+
+export interface PowerEstimateResponse {
+  exclusive: boolean;
+  isEstimated?: boolean;
+  totalPower: number;
+  type: string;
+  paidPowerNotEnough: boolean;
+}
+
+export async function estimatePower(body: RunRequest): Promise<PowerEstimateResponse> {
+  return request<PowerEstimateResponse>("/agent/power-estimates", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(body),
   });
 }

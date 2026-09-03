@@ -4,6 +4,7 @@ import { readFileSync } from "fs";
 import { fileURLToPath } from "url";
 import { dirname, resolve } from "path";
 import { consumePrivateRunControls } from "./private-run-controls.js";
+import { setCalculatePowerRequested } from "./execution-mode.js";
 
 try {
   process.argv = consumePrivateRunControls(process.argv);
@@ -323,5 +324,17 @@ program.addCommand(happyhorseCmd);
 program.addCommand(veoAiCmd);
 program.addCommand(viduAiCmd);
 program.addCommand(sulphur2Cmd);
+
+for (const command of program.commands) {
+  if (!["upload", "status", "info"].includes(command.name())) {
+    command.option(
+      "--calculate-power",
+      "Estimate power consumption without creating or executing a task",
+    );
+    command.hook("preAction", (actionCommand) => {
+      setCalculatePowerRequested(actionCommand.opts().calculatePower === true);
+    });
+  }
+}
 
 await program.parseAsync();
