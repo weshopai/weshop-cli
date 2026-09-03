@@ -1,5 +1,5 @@
 import { Command, InvalidArgumentError } from "commander";
-import { fetchAgentInfo } from "../client.js";
+import { fetchAgentInfo, type AgentInfoResourceType } from "../client.js";
 import { printError } from "../printer.js";
 
 const AGENTS = ["aimodel", "aiproduct", "aipose", "expandimage", "removeBG", "virtualtryon"];
@@ -44,6 +44,13 @@ function parsePositiveInteger(value: string, max?: number): number {
   return parsed;
 }
 
+function parseResourceType(value: string): AgentInfoResourceType {
+  if (value !== "locations" && value !== "fashionModels") {
+    throw new InvalidArgumentError("must be locations or fashionModels");
+  }
+  return value;
+}
+
 function printPresetList(label: string, items: PresetItem[]) {
   console.log(`  ${label}: (${items.length} items)`);
   for (const item of items) {
@@ -64,16 +71,21 @@ export const infoCmd = new Command("info")
     "  weshop info removeBG\n" +
     "  weshop info aimodel --version v1.0\n" +
     "  weshop info aimodel --page 2 --page-size 100\n" +
+    "  weshop info aimodel --resource-type locations\n" +
     "  weshop info aimodel --json"
   )
   .argument("<agent>", `Agent name: ${AGENTS.join(", ")}`)
   .option("--version <ver>", "Agent version (default: v1.0)", "v1.0")
   .option("--page <number>", "Page number (default: 1)", (value) => parsePositiveInteger(value), 1)
   .option("--page-size <number>", "Items per resource (default: 50, max: 100)", (value) => parsePositiveInteger(value, 100), 50)
+  .option("--resource-type <type>", "Only return aimodel locations or fashionModels", parseResourceType)
   .option("--json", "Output raw JSON instead of formatted list")
-  .action(async (agent: string, opts: { version: string; page: number; pageSize: number; json?: boolean }) => {
+  .action(async (agent: string, opts: { version: string; page: number; pageSize: number; resourceType?: AgentInfoResourceType; json?: boolean }) => {
     try {
-      const data = (await fetchAgentInfo(agent, opts.version, opts.page, opts.pageSize)) as AgentInfoData;
+      if (opts.resourceType && agent !== "aimodel") {
+        throw new Error("--resource-type is only supported for aimodel");
+      }
+      const data = (await fetchAgentInfo(agent, opts.version, opts.page, opts.pageSize, opts.resourceType)) as AgentInfoData;
 
       if (opts.json) {
         console.log(JSON.stringify(data, null, 2));

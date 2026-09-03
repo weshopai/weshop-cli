@@ -61,9 +61,10 @@ test("fetchAgentInfo sends the default pagination parameters", async () => {
   assert.equal(url.searchParams.get("agentVersion"), "v1.0");
   assert.equal(url.searchParams.get("page"), "1");
   assert.equal(url.searchParams.get("pageSize"), "50");
+  assert.equal(url.searchParams.get("resourceType"), null);
 });
 
-test("fetchAgentInfo sends custom pagination parameters", async () => {
+test("fetchAgentInfo sends custom pagination and resource type parameters", async () => {
   const urls: string[] = [];
   const originalFetch = globalThis.fetch;
   globalThis.fetch = async (input) => {
@@ -74,7 +75,7 @@ test("fetchAgentInfo sends custom pagination parameters", async () => {
   };
 
   try {
-    await fetchAgentInfo("aiproduct", "v1.0", 3, 100);
+    await fetchAgentInfo("aimodel", "v1.0", 3, 100, "locations");
   } finally {
     globalThis.fetch = originalFetch;
   }
@@ -82,4 +83,5 @@ test("fetchAgentInfo sends custom pagination parameters", async () => {
   const url = new URL(urls[0]);
   assert.equal(url.searchParams.get("page"), "3");
   assert.equal(url.searchParams.get("pageSize"), "100");
+  assert.equal(url.searchParams.get("resourceType"), "locations");
 });

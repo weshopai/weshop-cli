@@ -112,11 +112,14 @@ export async function pollRun(executionId: string): Promise<PollResponse> {
   return request<PollResponse>(`/agent/runs/${executionId}`);
 }
 
+export type AgentInfoResourceType = "locations" | "fashionModels";
+
 export async function fetchAgentInfo(
   agentName: string,
   agentVersion: string,
   page = 1,
   pageSize = 50,
+  resourceType?: AgentInfoResourceType,
 ): Promise<unknown> {
   const query = new URLSearchParams({
     agentName,
@@ -124,6 +127,7 @@ export async function fetchAgentInfo(
     page: String(page),
     pageSize: String(pageSize),
   });
+  if (resourceType) query.set("resourceType", resourceType);
   return request<unknown>(`/v1/agent/info?${query.toString()}`);
 }
 
