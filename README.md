@@ -336,6 +336,21 @@ The output is designed to be easily parsed by automated tools and AI agents:
 - `--help` on each command documents every parameter, enum value, and constraint
 - Local images are auto-uploaded and cached — no separate upload step needed
 
+API failures use the same structured contract and preserve the server metadata:
+
+```text
+[error]
+  code: SUBSCRIPTION_REQUIRED
+  retryable: false
+  httpStatus: 403
+  message: Paid subscription required
+```
+
+`code` and `retryable` come from the OpenAPI error envelope. `httpStatus` is
+included when the transport returned a status. Automation should branch on
+these fields instead of matching `message`, which is diagnostic text and may
+change independently.
+
 ## License
 
 Apache-2.0

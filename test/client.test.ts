@@ -2,6 +2,7 @@ import assert from "node:assert/strict";
 import test from "node:test";
 
 import { APIRequestError, createRunIdempotencyKey, estimatePower, fetchAgentInfo, submitRun, type RunRequest } from "../src/client.js";
+import { printError } from "../src/printer.js";
 
 process.env.WESHOP_API_KEY = "test-api-key";
 
@@ -98,6 +99,26 @@ test("non-JSON API failures produce an explicit response error", async () => {
   } finally {
     globalThis.fetch = originalFetch;
   }
+});
+
+test("printed API errors preserve retry and HTTP status metadata", () => {
+  const originalError = console.error;
+  const lines: string[] = [];
+  console.error = (...values) => { lines.push(values.join(" ")); };
+
+  try {
+    printError(new APIRequestError("SUBSCRIPTION_REQUIRED", "Paid subscription required", false, 403));
+  } finally {
+    console.error = originalError;
+  }
+
+  assert.deepEqual(lines, [
+    "[error]",
+    "  code: SUBSCRIPTION_REQUIRED",
+    "  retryable: false",
+    "  httpStatus: 403",
+    "  message: Paid subscription required",
+  ]);
 });
 
 test("fetchAgentInfo sends the default pagination parameters", async () => {

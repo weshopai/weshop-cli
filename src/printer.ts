@@ -73,6 +73,10 @@ export function printError(err: unknown) {
   console.error("[error]");
   if (err instanceof APIRequestError) {
     console.error(`  code: ${err.code}`);
+    console.error(`  retryable: ${err.retryable}`);
+    if (err.status !== undefined) {
+      console.error(`  httpStatus: ${err.status}`);
+    }
   }
   console.error(`  message: ${msg}`);
 }
