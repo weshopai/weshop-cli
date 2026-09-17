@@ -127,7 +127,7 @@ Run `weshop <command> --help` to see each command's full parameters, enum values
 | `futuristic-elegance` | Dress a person in futuristic harajuku fashion — cinematic sci-fi outfit transformation |
 | `gender-swap` | AI gender swap — transform a portrait to the opposite gender while preserving identity |
 | `ghibli-art-create` | AI Ghibli art creator — transform any photo into Studio Ghibli anime art style |
-| `gpt-image` | GPT Image 2 image generator — create high-quality images, text-rich visuals, and product photography from prompts |
+| `gpt-image` | GPT Image 2 and 2.5 image generator — create high-quality images, text-rich visuals, and product photography from prompts |
 | `grok-imagine` | Grok Imagine image generator — create high-resolution images from text using xAI Aurora |
 | `hair-color-try-on` | Hair color try-on — change a person's hair color while preserving hairstyle and details |
 | `happy-woman-bikini-ai-pic` | Happy woman bikini AI pic — transform a person photo into a bikini model image or video |
