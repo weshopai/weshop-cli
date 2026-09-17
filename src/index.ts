@@ -1,4 +1,5 @@
 #!/usr/bin/env node
+import { serviceCmd } from './commands/service.js';
 import { Command } from "commander";
 import { readFileSync } from "fs";
 import { fileURLToPath } from "url";
@@ -337,4 +338,5 @@ for (const command of program.commands) {
   }
 }
 
+program.addCommand(serviceCmd);
 await program.parseAsync();
