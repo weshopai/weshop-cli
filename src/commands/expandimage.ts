@@ -17,7 +17,7 @@ export const expandimageCmd = new Command("expandimage")
   .requiredOption("--height <px>", "Target canvas height in pixels (max 4096)", parseInt)
   .option("--fill-left <px>", "Horizontal offset: distance from left edge of canvas to left edge of original (default: centered)", parseInt)
   .option("--fill-top <px>", "Vertical offset: distance from top edge of canvas to top edge of original (default: centered)", parseInt)
-  .option("--batch <count>", "Number of images to generate, 1-16 (default: 1)", (v) => parseInt(v, 10), 1)
+  .option("--batch <count>", "Number of images to generate, 1-4 (default: 1)", (v) => parseInt(v, 10), 1)
   .option("--task-name <name>", "Human-readable label for this run")
   .option("--no-wait", "Return immediately after submission; use 'weshop status <id>' to check later")
   .action(async (opts) => {
