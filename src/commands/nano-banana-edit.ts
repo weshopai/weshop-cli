@@ -1,7 +1,7 @@
 import { Command } from "commander";
 import { executeRun } from "../run-helper.js";
 
-const NANO_MODELS = new Set(["nano1", "nano", "nano2"]);
+const NANO_MODELS = new Set(["nano1", "nano", "nano2", "nano2.1"]);
 
 export const nanoBananaEditCmd = new Command("nano-banana-edit")
   .summary("Nano Banana image editor — generate or edit images with Gemini-based Nano models")
@@ -12,15 +12,16 @@ export const nanoBananaEditCmd = new Command("nano-banana-edit")
     "Model (--model):\n" +
     "  nano1   Nano Banana\n" +
     "  nano    Nano Banana Pro\n" +
-    "  nano2   Nano Banana 2 (default)\n\n" +
+    "  nano2   Nano Banana 2 (default)\n" +
+    "  nano2.1 Nano Banana 2.1\n\n" +
     "Image size (--image-size):\n" +
     "  1K   1K resolution (default)\n" +
     "  2K   2K resolution\n" +
     "  4K   4K resolution\n" +
-    "(Primarily used with nano and nano2.)\n\n" +
+    "(Primarily used with nano, nano2, and nano2.1.)\n\n" +
     "Aspect ratio (--aspect-ratio):\n" +
     "  auto (default), 1:1, 2:3, 3:2, 4:3, 3:4, 4:5, 5:4, 16:9, 9:16, 21:9\n" +
-    "With model nano2 you may also use: 1:4, 4:1, 1:8, 8:1\n\n" +
+    "With models nano2 and nano2.1 you may also use: 1:4, 4:1, 1:8, 8:1\n\n" +
     "Examples:\n" +
     "  weshop nano-banana-edit --prompt 'A photorealistic macro shot of dew on a leaf'\n" +
     "  weshop nano-banana-edit --image ./product.png --prompt 'White seamless studio background'\n" +
@@ -28,7 +29,7 @@ export const nanoBananaEditCmd = new Command("nano-banana-edit")
   )
   .option("--image <path|url...>", "Reference images — local file paths or URLs (up to 9, optional)")
   .option("--prompt <text>", "Describe the desired edit or generation (optional)")
-  .option("--model <name>", "nano1 | nano | nano2 (default: nano2)")
+  .option("--model <name>", "nano1 | nano | nano2 | nano2.1 (default: nano2)")
   .option("--aspect-ratio <ratio>", "Aspect ratio (default: auto)")
   .option("--image-size <size>", "Output resolution: 1K (default), 2K, or 4K")
   .option("--batch <count>", "Number of images to generate, 1-16 (default: 1)", (v) => parseInt(v, 10), 1)
@@ -43,7 +44,7 @@ export const nanoBananaEditCmd = new Command("nano-banana-edit")
 
     const modelName = (opts.model ?? "nano2") as string;
     if (!NANO_MODELS.has(modelName)) {
-      console.error("[error]\n  message: --model must be one of: nano1, nano, nano2");
+      console.error("[error]\n  message: --model must be one of: nano1, nano, nano2, nano2.1");
       process.exit(1);
     }
 
