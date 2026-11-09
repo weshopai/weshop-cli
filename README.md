@@ -137,7 +137,7 @@ Run `weshop <command> --help` to see each command's full parameters, enum values
 | `midjourney` | Midjourney image generator — create high-quality images using Midjourney v6.1, v7, or Niji 6 |
 | `mugshot-creator` | AI mugshot creator — generate a police-style mugshot photo from a portrait |
 | `murder-drones-oc` | AI Murder Drones OC maker — transform a person into a Murder Drones-inspired robotic drone character |
-| `nano-banana-edit` | Nano Banana image editor — generate or edit images with Nano Banana, Nano Banana Pro, or Nano Banana 2 using Google's Gemini-based models |
+| `nano-banana-edit` | Nano Banana image editor — generate or edit images with Nano Banana, Pro, 2, or 2.1; CLI default stays Nano Banana 2 |
 | `outfit-generator` | AI outfit generator — redesign a complete outfit on a person photo based on style prompt |
 | `personalized-swimsuit` | Personalized swimsuit — transform a person photo into a bikini model image or video |
 | `photo-to-bikini-ai` | AI photo to bikini converter — transform a person photo into a bikini image |
@@ -182,7 +182,7 @@ Run `weshop <command> --help` to see each command's full parameters, enum values
 | `kling-O1` | Kling O1 AI video generator — create cinematic videos with Omni One control via text, reference images, first/last frames, or a reference video |
 | `kling-motion-control` | Kling Motion Control — transfer motion from a reference video onto a character image with identity preservation |
 | `kling-v3-omni` | Kling 3.0 Omni — create multimodal AI videos from text, reference images, and an optional reference video, with native audio |
-| `kling` | AI video generation — create cinematic videos from images and text using Kling |
+| `kling` | Kling video generation — existing Kling 3.0 first/last-frame CLI default, with optional Kling 4.0 Reference and I2V |
 | `logo-remover-from-video` | Logo remover from video — remove logos or watermarks from a video |
 | `minimax-h3` | MiniMax H3 — build multimodal AI videos from text, reference images, and optional reference videos and audio, including image-to-video first/last frame control |
 | `remove-subtitles-from-video-online-free` | Remove subtitles from video online free — remove subtitles or text overlays from a video |
@@ -197,7 +197,7 @@ Run `weshop <command> --help` to see each command's full parameters, enum values
 | `video-upscaler-online-free` | Video upscaler online free — upscale and enhance video quality using AI |
 | `video-watermark-remover` | AI video watermark remover — remove watermarks, logos, or text from a video |
 | `vidu-ai` | Vidu Q3 AI video generator — create cinematic short videos with Vidu Q3 Pro or Pro Fast modes |
-| `wan-ai` | Wan AI video generator — create AI videos from images and text using Wan AI |
+| `wan-ai` | Wan video generation — unchanged Wan 2.5 CLI default, with optional Wan 3.0 Reference and I2V |
 
 ## Example: virtual try-on
 
