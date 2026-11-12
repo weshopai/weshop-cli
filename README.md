@@ -354,3 +354,15 @@ change independently.
 ## License
 
 Apache-2.0
+
+### Material validation and failure details
+
+Local image uploads automatically include the selected agent/version/model, including first, last and middle frames. Generic `weshop upload` keeps its limits (minimum 512px on each side, width/height ratio 0.5–2, maximum 20 MiB; GIF/BMP unsupported). To use a model's input rules explicitly:
+
+```sh
+weshop upload ./frame.png --agent kling --model Kling_4_0_I2V
+```
+
+Kling 4.0 accepts JPEG/PNG images with each side at least 300px, ratio 0.4–2.5, and at most 30 MiB. Its reference videos must each be 3–30 seconds (30 seconds combined), each side 700–4553px, no more than 8294400 pixels, ratio 0.4–2.5, and 24–60fps. Reference limits describe input files; `--duration` controls the generated output.
+
+Uploaded and cached URLs are checked again when submitting. On rejection, the server identifies the material and property, such as `videos[1].fps` (the second reference video), its actual value and the required range. `status` and waiting commands print each failed item's `error`, including when other items succeed. Old responses without a reason retain the generic fallback. Structured `service` error objects now also contain `message`, while keeping `code` and `retryable` compatible. Video/audio files still require hosted URLs.

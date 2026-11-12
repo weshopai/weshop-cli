@@ -20,6 +20,7 @@ export const seedanceCmd = new Command("seedance")
         "  Seedance_20_Mini     Seedance 2.0 Mini — 480p, 720p, lower cost\n" +
         "  Seedance_10_Pro      Seedance 1.0 Pro — uses the first image as first frame\n" +
         "  Seedance_10_Pro_Fast Seedance 1.0 Pro Fast — uses the first image as first frame\n\n" +
+        "Seedance 2.0 image inputs: each side 300-6000px, ratio 0.4-2.5, < 30 MiB. Reference audio: each 2-15s and combined <= 15s.\n" +
         "Duration (--duration):\n" +
         "  Seedance_20/Mini: 4s-15s  (default: 4s)\n" +
         "  Seedance_10_Pro/Fast: 2s-12s  (default: 4s)\n\n" +
@@ -88,8 +89,8 @@ export const seedanceCmd = new Command("seedance")
         };
         if (isSeedance20Series) {
             params.resolution = opts.resolution ?? "720p";
-            if (opts.firstFrame) params.firstFrame = (await resolveImage(opts.firstFrame)).url;
-            if (opts.lastFrame) params.lastFrame = (await resolveImage(opts.lastFrame)).url;
+            if (opts.firstFrame) params.firstFrame = (await resolveImage(opts.firstFrame, { agentName: "seedance", agentVersion: "v1.0", modelName: String(params.modelName ?? "Seedance_20") }, "firstFrame")).url;
+            if (opts.lastFrame) params.lastFrame = (await resolveImage(opts.lastFrame, { agentName: "seedance", agentVersion: "v1.0", modelName: String(params.modelName ?? "Seedance_20") }, "lastFrame")).url;
             if (opts.extendVideo) {
                 params.extendVideo = opts.extendVideo;
                 params.extendDirection = opts.extendDirection;

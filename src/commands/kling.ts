@@ -11,6 +11,8 @@ export const klingCmd = new Command("kling")
     "Legacy --image: 1-2 images, first frame then last frame; Kling_2_1_Master accepts only the first.\n" +
     "Models: Kling_3_0 (default), Kling_2_6, Kling_2_5_Turbo, Kling_2_1_Master, Kling_2_1, Kling_4_0_Reference, Kling_4_0_I2V.\n" +
     "Kling 4.0: 3s-30s (default 10s), 720p/1080p (default 1080p).\n" +
+    "Kling 4.0 image inputs: JPEG/PNG, each side >= 300px, ratio 0.4-2.5, <= 30 MiB.\n" +
+    "Reference video inputs: each 3-30s, combined <= 30s; each side 700-4553px, <= 8294400 pixels, ratio 0.4-2.5, 24-60fps. These limits describe inputs; --duration controls generated output.\n" +
     "Reference: text only, up to 10 reference images and 5 hosted reference videos. Images are references, not first frames.\n" +
     "I2V: text only, or --image first [last], or explicit --first-frame/--last-frame; up to 10 images total including middle frames. No video references.\n" +
     "--middle-frames is a JSON array of {url, id?}; image paths are uploaded automatically. Do not combine --image with explicit first/last frames.\n" +
@@ -82,9 +84,9 @@ export const klingCmd = new Command("kling")
       // Validate everything before uploading local assets.
       params.resolution = opts.resolution ?? "1080p";
       if (opts.aspectRatio !== undefined) params.aspectRatio = opts.aspectRatio;
-      if (opts.firstFrame) params.firstFrame = (await resolveImage(opts.firstFrame)).url;
-      if (opts.lastFrame) params.lastFrame = (await resolveImage(opts.lastFrame)).url;
-      if (opts.middleFrames !== undefined) params.middleFrames = await Promise.all(middle.map(async f => ({ ...f, url: (await resolveImage(f.url)).url })));
+      if (opts.firstFrame) params.firstFrame = (await resolveImage(opts.firstFrame, { agentName: "kling", agentVersion: "v1.0", modelName: model }, "firstFrame")).url;
+      if (opts.lastFrame) params.lastFrame = (await resolveImage(opts.lastFrame, { agentName: "kling", agentVersion: "v1.0", modelName: model }, "lastFrame")).url;
+      if (opts.middleFrames !== undefined) params.middleFrames = await Promise.all(middle.map(async (f, index) => ({ ...f, url: (await resolveImage(f.url, { agentName: "kling", agentVersion: "v1.0", modelName: model }, `middleFrames[${index}]`)).url })));
     }
     await executeRun("kling", "v1.0", { images, videos, wait: opts.wait }, params, opts.taskName ? { taskName: opts.taskName } : {});
   });

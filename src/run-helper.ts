@@ -25,6 +25,7 @@ export async function executeRun(
 ) {
   try {
     const input: Record<string, unknown> = { ...extraInput };
+    const uploadContext = { agentName, agentVersion, modelName: typeof params.modelName === "string" ? params.modelName : undefined };
 
     // ── video input ──────────────────────────────────────────────────────────
     if (opts.videos && opts.videos.length > 0) {
@@ -45,8 +46,8 @@ export async function executeRun(
     // ── multi-image input ────────────────────────────────────────────────────
     if (opts.images && opts.images.length > 0) {
       const urls: string[] = [];
-      for (const img of opts.images) {
-        const { url } = await resolveImage(img);
+      for (const [index, img] of opts.images.entries()) {
+        const { url } = await resolveImage(img, uploadContext, `images[${index}]`);
         urls.push(url);
       }
       console.log("[images]");
@@ -57,7 +58,7 @@ export async function executeRun(
 
     // ── single primary image ─────────────────────────────────────────────────
     if (opts.image) {
-      const { url: imageUrl } = await resolveImage(opts.image);
+      const { url: imageUrl } = await resolveImage(opts.image, uploadContext, "image");
       console.log("[image]");
       console.log(`  imageUrl: ${imageUrl}`);
       if (!input.originalImage) input.originalImage = imageUrl;

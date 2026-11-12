@@ -8,6 +8,7 @@ export const klingMotionControlCmd = new Command("kling-motion-control")
     "Inputs:\n" +
     "  --image  Character still (local file path or URL)\n" +
     "  --video  Motion reference clip (hosted URL only; local video files are not auto-uploaded)\n\n" +
+    "Image inputs: each side >= 300px, ratio 0.4-2.5. Motion video inputs: 3-30s, each side 340-3850px, hosted MP4/MOV URL.\n" +
     "Optional --prompt refines background, lighting, or styling while preserving motion.\n" +
     "Results come back in video[N].url.\n\n" +
     "Examples:\n" +

@@ -9,6 +9,8 @@ export const minimaxH3Cmd = new Command("minimax-h3")
     "Model (--model):\n" +
     "  MiniMax_H3_Reference  Reference mode (default) — text-only, or up to 9 images + 3 videos + 3 audios\n" +
     "  MiniMax_H3_I2V        Image to Video — requires 1–2 images (image 1 = first frame, image 2 = last frame); no video/audio input; aspect ratio must be adaptive\n\n" +
+    "Reference inputs: <= 12 media files total. Each reference video must be 2-15s, with <= 15s combined. Audio references require an image or video.\n" +
+    "These reference limits describe inputs; --duration controls generated output.\n" +
     "--video and --audio must be hosted URLs (local video/audio upload is not supported).\n\n" +
     "Duration (--duration): 5s-15s (default: 5s)\n" +
     "Aspect ratio (--aspect-ratio): adaptive (default), 21:9, 16:9, 4:3, 1:1, 3:4, 9:16\n\n" +
@@ -63,6 +65,14 @@ export const minimaxH3Cmd = new Command("minimax-h3")
       }
     }
 
+    if (modelName === "MiniMax_H3_Reference" && imageList.length + (videos?.length ?? 0) + (audios?.length ?? 0) > 12) {
+      console.error("[error]\n  message: MiniMax_H3_Reference supports at most 12 media files total");
+      process.exit(1);
+    }
+    if (modelName === "MiniMax_H3_Reference" && audios?.length && !imageList.length && !videos?.length) {
+      console.error("[error]\n  message: Audio references require at least one image or video");
+      process.exit(1);
+    }
     const params: Record<string, unknown> = {
       textDescription: opts.prompt,
       modelName,

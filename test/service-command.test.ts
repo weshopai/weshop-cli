@@ -35,3 +35,17 @@ test('service status rejects path injection and queries valid execution exactly 
   assert.deepEqual(paths,['/openapi/agent/runs/0123456789abcdef01234567']);
  } finally {server.closeAllConnections();await new Promise<void>((resolve,reject)=>server.close(err=>err?reject(err):resolve()))}
 });
+
+test('service returns the server material reason as one JSON message', async () => {
+ const server=createServer((_req,res)=>{res.writeHead(422,{'Content-Type':'application/json'});res.end(JSON.stringify({success:false,error:{code:'INVALID_ARGUMENT',message:'Kling 4.0 videos[1].fps: received 12 fps; required 24-60 fps',retryable:false}}))});
+ await new Promise<void>(resolve=>server.listen(0,'127.0.0.1',resolve));
+ try {
+  const addr=server.address() as {port:number};
+  const result=await command(['status','0123456789abcdef01234567'],{WESHOP_API_KEY:'fixture',WESHOP_BASE_URL:`http://127.0.0.1:${addr.port}/openapi`});
+  assert.equal(result.code,1);assert.equal(result.stderr,'');
+  assert.equal(result.stdout.trim().split('\n').length,1);
+  const error=JSON.parse(result.stdout).error;
+  assert.equal(error.code,'INVALID_ARGUMENT');assert.equal(error.retryable,false);
+  assert.match(error.message,/videos\[1\]\.fps.*12 fps.*24-60 fps/);
+ } finally {server.closeAllConnections();await new Promise<void>(resolve=>server.close(()=>resolve()));}
+});

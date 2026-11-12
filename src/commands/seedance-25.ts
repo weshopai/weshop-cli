@@ -11,6 +11,9 @@ export const seedance25Cmd = new Command("seedance-25")
     "First/last-frame mode cannot be combined with ordinary references or video extension. Extension mode supports up to 10 videos including the target video.\n" +
     "When using multiple images, refer to them in the prompt as image 1, image 2, etc.\n" +
     "--video, --extend-video, and --audio must be hosted URLs (local video/audio upload is not supported).\n\n" +
+    "Image inputs: each side 300-6000px, ratio 0.4-2.5, < 30 MiB.\n" +
+    "Reference video inputs: each 2-30s, combined <= 30s, <= 200 MiB per file, each side 300-6000px, 407696-8295044 pixels, ratio 0.4-2.5, 24-60fps.\n" +
+    "Reference audio inputs: each 2-30s and combined <= 30s.\n" +
     "Duration (--duration): -1 or 4s-30s (default: 4s)\n" +
     "Aspect ratio (--aspect-ratio): 21:9, 16:9, 9:16, 3:4 (default), 4:3, 1:1, adaptive\n" +
     "Generate audio (--generate-audio): true (default) or false\n\n" +
@@ -89,8 +92,8 @@ export const seedance25Cmd = new Command("seedance-25")
       aspectRatio: opts.aspectRatio ?? "3:4",
       generateAudio: opts.generateAudio ?? "true",
     };
-    if (opts.firstFrame) params.firstFrame = (await resolveImage(opts.firstFrame)).url;
-    if (opts.lastFrame) params.lastFrame = (await resolveImage(opts.lastFrame)).url;
+    if (opts.firstFrame) params.firstFrame = (await resolveImage(opts.firstFrame, { agentName: "seedance-25", agentVersion: "v1.0", modelName: String(params.modelName) }, "firstFrame")).url;
+    if (opts.lastFrame) params.lastFrame = (await resolveImage(opts.lastFrame, { agentName: "seedance-25", agentVersion: "v1.0", modelName: String(params.modelName) }, "lastFrame")).url;
     if (opts.extendVideo) {
       params.extendVideo = opts.extendVideo;
       params.extendDirection = opts.extendDirection;

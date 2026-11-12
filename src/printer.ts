@@ -26,7 +26,8 @@ export function printPollResult(data: PollResponse, billing?: Pick<RunResponse, 
   }
 
   if (exec.status === "Failed") {
-    console.log("  message: Generation failed");
+    const reasons = [...new Set(exec.result.map(r => r.error?.trim()).filter(Boolean))];
+    console.log(`  message: ${reasons.join("; ") || "Generation failed"}`);
   }
 
   if (exec.result.length) {
@@ -36,6 +37,7 @@ export function printPollResult(data: PollResponse, billing?: Pick<RunResponse, 
     exec.result.forEach((r, i) => {
       console.log(`  ${mediaLabel}[${i}]:`);
       console.log(`    status: ${r.status}`);
+      if (r.error?.trim()) console.log(`    error: ${r.error.trim()}`);
       if (r.video) {
         console.log(`    url: ${r.video}`);
         if (r.videoPoster) {
@@ -44,8 +46,8 @@ export function printPollResult(data: PollResponse, billing?: Pick<RunResponse, 
         if (r.lastFrame) {
           console.log(`    lastFrame: ${r.lastFrame}`);
         }
-      } else {
-        console.log(`    url: ${r.image ?? ""}`);
+      } else if (r.image) {
+        console.log(`    url: ${r.image}`);
       }
     });
   }
