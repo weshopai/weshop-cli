@@ -76,7 +76,9 @@ export interface UploadResult {
   image: string;
 }
 
-export async function uploadImage(filePath: string): Promise<UploadResult> {
+export interface UploadContext { agentName: string; agentVersion: string; modelName?: string; }
+
+export async function uploadImage(filePath: string, context?: UploadContext): Promise<UploadResult> {
   const abs = path.resolve(filePath);
   if (!fs.existsSync(abs)) throw new Error(`File not found: ${abs}`);
 
@@ -84,7 +86,8 @@ export async function uploadImage(filePath: string): Promise<UploadResult> {
   const form = new FormData();
   form.append("image", blob, path.basename(abs));
 
-  return request<UploadResult>("/agent/assets/images", {
+  const query = context ? `?${new URLSearchParams({ agentName: context.agentName, agentVersion: context.agentVersion, ...(context.modelName ? { modelName: context.modelName } : {}) })}` : "";
+  return request<UploadResult>(`/agent/assets/images${query}`, {
     method: "POST",
     body: form,
   });
@@ -137,6 +140,7 @@ export async function estimatePower(body: RunRequest): Promise<PowerEstimateResp
 
 export interface ExecutionResult {
   status: string;
+  error?: string;
   image?: string;
   video?: string;
   videoPoster?: string;
@@ -196,14 +200,16 @@ export async function waitForCompletion(
  * Resolve an image argument: if it looks like a URL pass through,
  * otherwise check upload cache, and upload only if not cached.
  */
-export async function resolveImage(imageArg: string): Promise<{ url: string; cached: boolean }> {
+export async function resolveImage(imageArg: string, context?: UploadContext, field?: string): Promise<{ url: string; cached: boolean }> {
   if (/^https?:\/\//.test(imageArg)) return { url: imageArg, cached: false };
 
   const abs = path.resolve(imageArg);
   const cached = getCachedUrl(abs);
   if (cached) return { url: cached, cached: true };
 
-  const { image } = await uploadImage(abs);
+  let image: string;
+  try { ({image} = await uploadImage(abs, context)); }
+  catch (error) { if (field && error instanceof Error) error.message = `${field}: ${error.message}`; throw error; }
   setCachedUrl(abs, image);
   return { url: image, cached: false };
 }

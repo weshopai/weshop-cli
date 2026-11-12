@@ -166,3 +166,28 @@ test("fetchAgentInfo sends custom pagination and resource type parameters", asyn
   assert.equal(url.searchParams.get("pageSize"), "100");
   assert.equal(url.searchParams.get("resourceType"), "locations");
 });
+
+test('image upload forwards the selected model and keeps generic uploads compatible', async () => {
+  const { uploadImage } = await import('../src/client.js');
+  const { mkdtempSync, writeFileSync, rmSync } = await import('node:fs');
+  const { tmpdir } = await import('node:os');
+  const { join } = await import('node:path');
+  const dir = mkdtempSync(join(tmpdir(), 'weshop-upload-test-'));
+  const file = join(dir, 'fixture.png');
+  writeFileSync(file, 'fixture');
+  const original = globalThis.fetch;
+  const urls: URL[] = [];
+  globalThis.fetch = async (input, init) => {
+    urls.push(new URL(String(input)));
+    assert.ok(init?.body instanceof FormData);
+    return new Response(JSON.stringify({success:true,data:{image:'https://example.com/upload.png'}}));
+  };
+  try {
+    await uploadImage(file, {agentName:'kling',agentVersion:'v1.0',modelName:'Kling_4_0_I2V'});
+    await uploadImage(file);
+    assert.equal(urls[0].searchParams.get('modelName'), 'Kling_4_0_I2V');
+    assert.equal(urls[0].searchParams.get('agentName'), 'kling');
+    assert.equal(urls[0].searchParams.get('agentVersion'), 'v1.0');
+    assert.equal(urls[1].search, '');
+  } finally { globalThis.fetch = original; rmSync(dir, {recursive:true,force:true}); }
+});

@@ -8,7 +8,7 @@ async function input() {
 }
 async function output(type:string, action:()=>Promise<unknown>) {
   try { if (!process.env.WESHOP_API_KEY?.trim()) throw new APIRequestError('CLI_CREDENTIAL_MISSING', 'Service credential is required'); process.stdout.write(JSON.stringify(serviceEnvelope(type,await action()))+'\n'); }
-  catch(error) { process.stdout.write(JSON.stringify({schemaVersion:1,type:'error',error:{code:error instanceof APIRequestError?error.code:'CLI_EXECUTION_FAILED',retryable:false}})+'\n');process.exitCode=1; }
+  catch(error) { process.stdout.write(JSON.stringify({schemaVersion:1,type:'error',error:{code:error instanceof APIRequestError?error.code:'CLI_EXECUTION_FAILED',retryable:false,message:error instanceof Error?error.message:'CLI execution failed'}})+'\n');process.exitCode=1; }
 }
 export const serviceCmd=new Command('service').description('Structured service protocol; JSON input/output, no implicit retries');
 serviceCmd.command('run').requiredOption('--idempotency-key <key>').action(async options=>output('submitted',async()=>submitRun(await input(),serviceIdempotencyKey(options.idempotencyKey))));
